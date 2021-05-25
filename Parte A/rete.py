@@ -11,8 +11,8 @@ def nuovaRete(numeroInput, numeroStratiHidden, numeroNodiHidden, numeroNodiOutpu
     SIGMA = 0.1
     rete.W1 = SIGMA * np.random.randn(numeroNodiHidden,numeroInput)
     rete.b1 = SIGMA * np.random.randn(numeroNodiHidden,1)
-    rete.W = SIGMA * np.random.randn(numeroNodiHidden,numeroNodiHidden,numeroStratiHidden-1)
-    rete.b = SIGMA * np.random.randn(numeroNodiHidden,1,numeroStratiHidden-1)
+    rete.W = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,numeroNodiHidden)
+    rete.b = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,1)
     rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden)
     rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1)
 
@@ -32,11 +32,13 @@ def infoRete(rete):
     ##Stampa le informazioni della rete come il  numero di strati, di elementi input, numero nodi interni, ecc...
     print("Informazioni sulla rete")
 
+    print("Numero strati interni: ",rete.nStrati)
     print("W1: [",rete.m,"x",rete.d,"]")
     print("b1: [",rete.m,"x",1,"]")
 
-    print("W: [",rete.m,"x",rete.m,"]")
-    print("b: [",rete.m,"x",1,"]")
+    if rete.nStrati > 1:
+        print("W: [",rete.m,"x",rete.m,"]")
+        print("b: [",rete.m,"x",1,"]")
 
     print("WOutput: [",rete.c,"x",rete.m,"]")
     print("bOutput: [",rete.c,"x",1,"]")
