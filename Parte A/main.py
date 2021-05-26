@@ -10,13 +10,14 @@ def main():
 
     rete = r.nuovaRete(5,3,7,3,arrayFa,fa.identity)
 
-    x = np.random.randn(5,1)
+    x = np.array([1,2,3,4,5])
+    t = np.array([6,7,8,9,10])
 
     r.infoRete(rete)
     
-    [y,a1,z1,a2] = bck.forwardStep(rete,x)
+    y = fa.derivSumOfSquares(x,t)
 
-    print("y:\n",y)
+    print(y)
 
 
 

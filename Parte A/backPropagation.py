@@ -1,5 +1,13 @@
 import numpy as np
 
+def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
+    #Passo di forward step
+    [y,a1,z1,a2] = forwardStep(rete,x)
+
+    #Passo di calcolo derivate
+    
+
+
 def forwardStep(rete,x):
 
     #ATTENZIONE IL PASSO FORWARD COSì SCRITTO ANDREBBE BENE SE LA RETE FOSSE SHALLOW
@@ -21,6 +29,11 @@ def forwardStep(rete,x):
         a2 = np.dot(rete.WOutput,z1) + rete.bOutput
         y = rete.g(a2)
 
-
-
     return (y,a1,z1,a2)
+
+def simulaRete(rete,x):
+    a1 = np.dot(rete.W1,x) + rete.b1
+    z1 = rete.f[0](a1)
+    a2 = np.dot(rete.WOutput,z1) + rete.bOutput
+    y = rete.g(a2)
+    return y
