@@ -19,7 +19,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
     derivBiasOut = sum(deltaOut)
     derivBiasHidden = sum(deltaHidden)
 
-    return [deltaHidden,deltaOut,derivBiasHidden,derivBiasOut]
+    return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut]
 
 def forwardStep(rete,x):
 
@@ -35,7 +35,6 @@ def forwardStep(rete,x):
         z1 = rete.f[0](a1) #(m,N)
         a2 = np.dot(rete.WOutput,z1) + rete.bOutput #(c,m)x(m,N) + (c,1) = (c,N) + (c,1) = (c,N)
         y = rete.g(a2) #(c,N)
-        print("a1.shape: ",a1.shape,"\na2.shape: ",a2.shape)
     else:
         a1 = np.dot(rete.W1,x) + rete.b1
         z1 = rete.f[0](a1)

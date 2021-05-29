@@ -9,6 +9,12 @@ import learningPhase as l
 import backPropagation as bck
 import funzioniMnist as fm
 
+#TO DO: f.crossEntropy(y,t) tira una eccezione sulla funzione sigmoide e non so perchè.
+#Bisogna risolvere questo problema.
+#Forse il problema sta davvero nella funzione sigmoide dato che tira un "RuntimeWarning: overflow encountered in exp",
+#ma lo fa solo alla epoca 0
+
+
 def main():
 
     M = 50
@@ -16,9 +22,6 @@ def main():
     epocheMax = 20
 
     #Recupero e stampa dimensioni del dataset mnist
-    #Al professore lo shape delle immagini è a 2 dimensioni, mentre io ne ottengo 3.
-    #Bisogna capire come ottenere il dataset delle immagini a 2 dimensioni per
-    #risolvere il problema... probabilmente 
     print(">Caricamento dataset...\n",end='',flush=True)
     time.sleep(0.2)
     X = fm.loadMnistImages("mnist/train-images-idx3-ubyte.gz")
@@ -29,9 +32,9 @@ def main():
     trainX = np.transpose(trainX) #(784,599)
     trainT = T[:,1:600] #(10, 599)
 
-    valX = X[601:800] #(199,784)
+    valX = X[601:1200] #(199,784)
     valX = np.transpose(valX) #(784,199)
-    valT = T[:,601:800] #(10,199)
+    valT = T[:,601:1200] #(10,199)
 
     print("X:\t",X.shape)
     print("labels:\t",labels.shape)
@@ -42,14 +45,13 @@ def main():
     print("ValT:\t",valT.shape)
 
     print("Caricamento completo!\n")
-
     #creazione rete e avvio learning
     arrayFa = [fa.sigmoide,fa.sigmoide,fa.sigmoide,fa.sigmoide,fa.sigmoide]
     rete = r.nuovaRete(len(trainX),1,M,len(trainT),arrayFa,fa.sigmoide) 
     r.infoRete(rete)
 
     #Fase di learning
-    print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='',flush=True)
+    print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
     time.sleep(0.1)
     [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,0,eta,fa.derivSigmoide,fa.derivSigmoide,fa.derivCrossEntropy,fa.discesaDelGradiente)
 

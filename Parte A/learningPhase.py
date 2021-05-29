@@ -17,10 +17,11 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     if batch == 1:
         eta = 0.5
     
-    for epoca in range(1,N):
+    for epoca in range(0,N):
+        print("Epoca[",epoca,"]...")
         if batch == 0:
             #Learning di tipo on-line
-            for n in range(1,len(x[0])):
+            for n in range(0,len(x[0])):
                 #Provo a fare con un solo strato interno
                 [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
 
@@ -32,15 +33,16 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
             rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOut)
         
         #Vado a simulare gli output della rete dopo l'aggiormenento alla epochesima-epoca e calcolo l'errore
-        y = f.simulaRete(rete,x)
-        yVal = f.simulaRete(rete,xVal)
-        err[epoca] = f.sumOfSquares(y,t)
-        errVal[epoca] = f.sumOfSquares(yVal,tVal)
+        y = b.simulaRete(rete,x)
+        yVal = b.simulaRete(rete,xVal)
+        #print("f.crossEntropy(y,t): ",f.crossEntropy(y,t))
+        #err[0,epoca] = f.crossEntropy(y,t)
+        #errVal[0,epoca] = f.crossEntropy(yVal,tVal)
 
         #Verifico se l'errore di valutazione è minore dell'errore minimo
-        if errVal[epoca] < minErr:
-            minErr = errVal[epoca]
-            reteScelta = rete
+        #if errVal[0,epoca] < minErr:
+        #    minErr = errVal[epoca]
+        #    reteScelta = rete
 
     return [reteScelta, err, errVal]
 
