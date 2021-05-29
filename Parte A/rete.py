@@ -9,12 +9,12 @@ def nuovaRete(numeroInput, numeroStratiHidden, numeroNodiHidden, numeroNodiOutpu
     #Generazione casuale degli iper parametri della rete. Per adesso dividiamo primo strato hidden dagli altri
     #a causa del diverso numero di dati in input
     SIGMA = 0.1
-    rete.W1 = SIGMA * np.random.randn(numeroNodiHidden,numeroInput)
-    rete.b1 = SIGMA * np.random.randn(numeroNodiHidden,1)
-    rete.W = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,numeroNodiHidden)
-    rete.b = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,1)
-    rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden)
-    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1)
+    rete.W1 = SIGMA * np.random.randn(numeroNodiHidden,numeroInput) #(m,d)
+    rete.b1 = SIGMA * np.random.randn(numeroNodiHidden,1) #(m,1)
+    rete.W = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,numeroNodiHidden) #(m,m)
+    rete.b = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,1) #(m,1)
+    rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden) #(c,m)
+    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1) #(c,1)
 
     #Dettagli della rete
     rete.nStrati = numeroStratiHidden
