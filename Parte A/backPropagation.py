@@ -4,7 +4,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
     #Per adesso la rete effettua la back propagation bene solo per rete shallow
 
     #Passo di forward step
-    [y,a1,z1,a2] = forwardStep(rete,x)
+    [y,a1,z1,a2] = forwardStep(rete,x) #y:(c,1), a1:(m,1), z1:(m,1), a2:(c,1)
 
     #Passo di calcolo derivate
     deltaOut = derivFunOutupt(a2) #(c,N)
@@ -28,13 +28,14 @@ def forwardStep(rete,x):
     #PER TUTTI GLI ALTRI Y,A1,A2,Z1, DATO CHE ORA OTTERREI I DELTA UTILI SOLO PER
     #GLI ULTIMI DUE STRATI DELLA RETE
 
-    #Magari si potrebbe cambiare andando a 
+    #x(784,) = (d,)
 
     if rete.nStrati == 1:
-        a1 = np.dot(rete.W1,x) + rete.b1 #(m,d)x(d,N) + (m,1) = (m,N) + (m,1) = (m,N)
-        z1 = rete.f[0](a1) #(m,N)
-        a2 = np.dot(rete.WOutput,z1) + rete.bOutput #(c,m)x(m,N) + (c,1) = (c,N) + (c,1) = (c,N)
-        y = rete.g(a2) #(c,N)
+        a1 = np.dot(rete.W1,x) #(m,d)x(d,) + (m,1) = (m,) + (m,1) = (m,)
+        a1 = a1 + rete.b1
+        z1 = rete.f[0](a1) #(m,)
+        a2 = np.dot(rete.WOutput,z1) + rete.bOutput #(c,m)x(m,) + (c,1) = (c,) + (c,1) = (c,)
+        y = rete.g(a2) #(c,)
     else:
         a1 = np.dot(rete.W1,x) + rete.b1
         z1 = rete.f[0](a1)

@@ -19,7 +19,7 @@ def main():
 
     M = 50
     eta = 0.0005
-    epocheMax = 20
+    epocheMax = 200
 
     #Recupero e stampa dimensioni del dataset mnist
     print(">Caricamento dataset...\n",end='',flush=True)
@@ -30,11 +30,15 @@ def main():
     #Divisione del dataset in train-val-test (manca il test)    
     trainX = X[1:600] #(599,784)
     trainX = np.transpose(trainX) #(784,599)
+    trainX = np.array(trainX)
     trainT = T[:,1:600] #(10, 599)
+    trainT = np.array(trainT)
 
     valX = X[601:1200] #(199,784)
     valX = np.transpose(valX) #(784,199)
+    valX = np.array(valX)
     valT = T[:,601:1200] #(10,199)
+    valT = np.array(valT)
 
     print("X:\t",X.shape)
     print("labels:\t",labels.shape)

@@ -21,7 +21,7 @@ def sumOfSquares(y,t):
     return e
 
 def crossEntropy(Y,T):
-    e=-sum(T * np.log(Y))
+    e=-sum(sum(T * np.log(Y)))
     return e
 
 def derivCrossEntropy(Y,T):

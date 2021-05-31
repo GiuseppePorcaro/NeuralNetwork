@@ -23,7 +23,9 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
             #Learning di tipo on-line
             for n in range(0,len(x[0])):
                 #Provo a fare con un solo strato interno
-                [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
+                xb = x[:,n].reshape((x.shape[0],1))
+                tb = t[:,n].reshape((t.shape[0],1))
+                [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, xb, tb, derivFunActHidden, derivFunActOutput, derivFunErr)
 
                 rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput)
         else:
@@ -35,14 +37,19 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
         #Vado a simulare gli output della rete dopo l'aggiormenento alla epochesima-epoca e calcolo l'errore
         y = b.simulaRete(rete,x)
         yVal = b.simulaRete(rete,xVal)
+        err[0][epoca] = f.crossEntropy(y,t)
+        errVal[0][epoca] = f.crossEntropy(yVal,tVal)
+
         #print("f.crossEntropy(y,t): ",f.crossEntropy(y,t))
-        #err[0,epoca] = f.crossEntropy(y,t)
-        #errVal[0,epoca] = f.crossEntropy(yVal,tVal)
+        #print("f.crossEntropy(yVal,tVal): ",f.crossEntropy(y,t))
+
+        #print("y:\n",y)
+        #print("\n\nyVal:\n",yVal)
 
         #Verifico se l'errore di valutazione è minore dell'errore minimo
-        #if errVal[0,epoca] < minErr:
-        #    minErr = errVal[epoca]
-        #    reteScelta = rete
+        if (errVal[0][epoca] < minErr).any():
+            minErr = errVal[0][epoca]
+            reteScelta = rete
 
     return [reteScelta, err, errVal]
 
