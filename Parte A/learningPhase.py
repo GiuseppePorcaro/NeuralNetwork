@@ -14,11 +14,12 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     minErr = f.sumOfSquares(yVal,tVal)
     reteScelta = rete
 
+    print("Epoca\t\t Errore\t\t\t\t Errore Valutazione")
+    print("---------------------------------------------------------------------------")
     if batch == 1:
         eta = 0.5
     
     for epoca in range(0,N):
-        print("Epoca[",epoca,"]...")
         if batch == 0:
             #Learning di tipo on-line
             for n in range(0,len(x[0])):
@@ -30,6 +31,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
                 rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput)
         else:
             #Learning di tipo batch
+###############################Controllare che la modalità batch si fa così
             [dervivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivBiasOutput, derivFunErr)
 
             rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOut)
@@ -40,11 +42,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
         err[0][epoca] = f.crossEntropy(y,t)
         errVal[0][epoca] = f.crossEntropy(yVal,tVal)
 
-        #print("f.crossEntropy(y,t): ",f.crossEntropy(y,t))
-        #print("f.crossEntropy(yVal,tVal): ",f.crossEntropy(y,t))
-
-        #print("y:\n",y)
-        #print("\n\nyVal:\n",yVal)
+        print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 
         #Verifico se l'errore di valutazione è minore dell'errore minimo
         if (errVal[0][epoca] < minErr).any():
