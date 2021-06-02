@@ -2,6 +2,7 @@ import rete as r
 import numpy as np
 from keras.datasets import mnist
 import matplotlib.pyplot as plt
+from sklearn.utils import shuffle
 import time
 
 import funzioniAttivazione as fa
@@ -12,11 +13,12 @@ import funzioniMnist as fm
 def main():
 
     M = 50
-    eta = 0.0005
+    eta = 0.1
     epocheMax = 200
     plot = 0
     numClasses = 10
     numFeatures = 28*28
+    batch = 0
     test = 0
 
     #Recupero e stampa dimensioni del dataset mnist
@@ -37,9 +39,16 @@ def main():
     # Vettorizzo le immagini in un vettore di 784 feature
     X, testX = X.reshape([-1, numFeatures]), testX.reshape([-1, numFeatures])
 
-    # Normalizzo i valori immaginde da [0, 255] a [0, 1]
-    X, testX = X / 255., testX / 255. 
+    # Normalizzo i valori immagine da [0, 255] a [0, 1]
+    X, testX = X / 255., testX / 255.
+
+    #Shuffle
+    X , labels = shuffle(X, labels)
+    testX, testT = shuffle(testX,testT)
+
+    #Ottengo le classi dalle etichette
     T = fm.getTargetsFromLabels(labels)
+
 
     #Divisione del dataset in train-val-test (manca il test)    
     trainX = X[1:600] #(599,784)
@@ -71,16 +80,8 @@ def main():
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,0,eta,fa.derivSigmoide,fa.derivSigmoide,fa.derivCrossEntropy,fa.discesaDelGradiente)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,fa.derivSigmoide,fa.derivSigmoide,fa.derivCrossEntropy,fa.discesaDelGradiente)
 
-    if test == 1:
-#############################Controllare il valore di y dato su matlab per verificare che sia corretto dal prof
-        kX = testX[0:10]
-        kX = np.transpose(kX)
-        tT = testT[0:10]
-        yTest = bck.simulaRete(rete,kX)
-        plotImmagini(tX,tT)
-        print("\n\nyTest: ",yTest)
 
 
 

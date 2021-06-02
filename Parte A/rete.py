@@ -14,14 +14,7 @@ def nuovaRete(numeroInput, numeroStratiHidden, numeroNodiHidden, numeroNodiOutpu
     rete.W = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,numeroNodiHidden) #(m,m)
     rete.b = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,1) #(m,1)
     rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden) #(c,m)
-    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1) #(c,1)
-
-    #Reshape dei bias altrimenti vengono considerati da python come matrici e non vettori
-    #rete.b1 = rete.b1.reshape((numeroNodiHidden,))
-    #rete.bOutput = rete.bOutput.reshape((numeroNodiOutput,))
-    #if numeroStratiHidden > 1:
-    #    rete.b = rete.b.reshape((numeroStratiHidden,))
-        
+    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1) #(c,1)        
 
     #Dettagli della rete
     rete.nStrati = numeroStratiHidden
