@@ -78,11 +78,17 @@ def main():
     rete = r.nuovaRete(len(trainX),numLayers,M,len(trainT),arrayFa,fa.sigmoide) 
     r.infoRete(rete)
 
+    #[y,a1,z1,a2,dhIn] = bck.backPropagation(rete,trainX,trainT,fa.derivSigmoide, fa.derivSigmoide, fa.derivCrossEntropy)
+
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
     time.sleep(0.1)
     [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,fa.derivSigmoide,fa.derivSigmoide,fa.derivCrossEntropy,fa.discesaDelGradiente)
 
+    #Fare plot degli errori
+
+def plotErrori(errore, erroreVal):
+    print("")
 
 
 

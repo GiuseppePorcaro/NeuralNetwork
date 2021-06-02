@@ -4,15 +4,64 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
     #Per adesso la rete effettua la back propagation bene solo per rete shallow
 
     if rete.nStrati == 1:
+        dhInput = 0 #serve solo per non far crashare quando la rete non ha più di un layers hidden
         #Passo di forward step
         [y,a1,z1,a2] = forwardStep(rete,x) #y:(c,1), a1:(m,1), z1:(m,1), a2:(c,1)
 
         #Passo di calcolo derivate
-        [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut] = calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete)
+        [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut, dh] = calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete)
+    else:
+
+        derivWhidden = np.zeros((rete.nStrati,rete.m,rete.m))
+        derivBiasHidden = np.zeros((rete.nStrati,len(x[0]),))
+
+        [y,a1,z1,a2] = forwardStep(rete,x)
+
+        k = rete.nStrati-1
+
+        [derivWhidden[k,:,:], derivWOut, derivBiasHidden[k,:], derivBiasOut,dh] = calcoloDerivate(y,a1[k,:,:],z1[k,:,:],a2,derivFunHidden, derivFunOutupt, derivFunErr,z1[k-1,:,:],t,rete)
+        k = k-1
+        for i in range(k,0,-1):
+
+            dh = np.dot(np.transpose(rete.W[i,:,:]),dh)
+            dh = dh * derivFunHidden(a1[i,:,:])
+
+            derivWhidden[i,:,:] = np.dot(dh,np.transpose(z1[i-1]))
+            derivBiasHidden[i,:] = sum(dh)
+
+        
+        dh = np.dot(np.transpose(rete.W[0,:,:]),dh)
+        dh = dh * derivFunHidden(a1[0,:,:])
+
+        dhInput = np.dot(dh,np.transpose(x))
+        derivBiasHidden[0,:] = sum(dh)
+
     
-    #DA INSERIRE L'ELSE E VEDERE DI CALCOLARE LE DERIVATE PER RETI A PIù STRATI
+    return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,dhInput]
+
+def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
+    #Questa funzione la uso per alleggerire il codice nella funzione della backprop.
+    #Nel caso la elimino
+
+    deltaOut = derivFunOutupt(a2) #(c,N)
+    deltaOut = deltaOut * derivFunErr(y,t) #(c,N)x(N,) = (c,N)
+
+    deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut) #(m,c)x(c,N) = (m,N)
+    deltaHidden = deltaHidden * derivFunHidden(a1) #(m,N)x(m,N) = (m,N)
+
+    derivWOut = np.dot(deltaOut,np.transpose(z1)) #(c,N)x(N,m) = (c,m)
+    derivWhidden = np.dot(deltaHidden,np.transpose(x)) #(m,N)x(N,d) = (m,d)
+
+    derivBiasOut = sum(deltaOut)
+    derivBiasHidden = sum(deltaHidden)
+
+    #print("\n\nderivWOut.shape: ",derivWOut.shape)
+    #print("derivWHidden.shape: ",derivWhidden.shape)
+    #print("derivBiasOut.shape: ",derivBiasOut.shape)
+    #print("derivBiasHidden.shape: ",derivBiasHidden.shape)
+
     
-    return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut]
+    return (derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,deltaHidden)
 
 def forwardStep(rete,x):
 
@@ -60,21 +109,3 @@ def simulaRete(rete,x):
         a2 = np.dot(rete.WOutput,z1) + rete.bOutput
         y = rete.g(a2)
     return y
-
-def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
-    #Questa funzione la uso per alleggerire il codice nella funzione della backprop.
-    #Nel caso la elimino
-
-    deltaOut = derivFunOutupt(a2) #(c,N)
-    deltaOut = deltaOut * derivFunErr(y,t) #(c,N)x(N,) = (c,N)
-
-    deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut) #(m,c)x(c,N) = (m,N)
-    deltaHidden = deltaHidden * derivFunHidden(a1) #(m,N)x(m,N) = (m,N)
-
-    derivWOut = np.dot(deltaOut,np.transpose(z1)) #(c,N)x(N,m) = (c,m)
-    derivWhidden = np.dot(deltaHidden,np.transpose(x)) #(m,N)x(N,d) = (m,d)
-
-    derivBiasOut = sum(deltaOut)
-    derivBiasHidden = sum(deltaHidden)
-    
-    return (derivWhidden,derivWOut,derivBiasHidden,derivBiasOut)
