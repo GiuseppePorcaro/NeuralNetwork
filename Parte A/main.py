@@ -13,13 +13,14 @@ import funzioniMnist as fm
 def main():
 
     M = 50
-    eta = 0.1
-    epocheMax = 200
+    eta = 0.005
     plot = 0
+    test = 0
+    batch = 0
+    numLayers = 1
+    epocheMax = 200
     numClasses = 10
     numFeatures = 28*28
-    batch = 0
-    test = 0
 
     #Recupero e stampa dimensioni del dataset mnist
     print(">Caricamento dataset...\n",end='',flush=True)
@@ -74,7 +75,7 @@ def main():
 
     #creazione rete e avvio learning
     arrayFa = [fa.sigmoide,fa.sigmoide,fa.sigmoide,fa.sigmoide,fa.sigmoide]
-    rete = r.nuovaRete(len(trainX),1,M,len(trainT),arrayFa,fa.sigmoide) 
+    rete = r.nuovaRete(len(trainX),numLayers,M,len(trainT),arrayFa,fa.sigmoide) 
     r.infoRete(rete)
 
     #Fase di learning
