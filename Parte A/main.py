@@ -13,10 +13,10 @@ import funzioniMnist as fm
 def main():
 
     M = 50
-    eta = 0.005
+    eta = 0.01
     plot = 0
     test = 0
-    batch = 0
+    batch = 1
     numLayers = 1
     epocheMax = 200
     numClasses = 10
@@ -33,7 +33,7 @@ def main():
     if plot == 1:
         plotImmagini(X, labels)
 
-    #Preprocessing------------------------------------------------------------------------------
+    #Pre-processing------------------------------------------------------------------------------
     # Converto in np array
     X, testX = np.array(X, np.float32), np.array(testX, np.float32)
 
@@ -63,13 +63,7 @@ def main():
     valT = np.array(valT)
     #-------------------------------------------------------------------------------------------
 
-    print("X:\t",X.shape)
-    print("labels:\t",labels.shape)
-    print("T:\t",T.shape)
-    print("TrainX:\t",trainX.shape)
-    print("TrainT:\t",trainT.shape)
-    print("ValX:\t",valX.shape)
-    print("ValT:\t",valT.shape)
+    infoShapes(X, labels, T, trainX, trainT, valX, valT)
 
     print("Caricamento completo!\n")
 
@@ -78,17 +72,32 @@ def main():
     rete = r.nuovaRete(len(trainX),numLayers,M,len(trainT),arrayFa,fa.sigmoide) 
     r.infoRete(rete)
 
-    #[y,a1,z1,a2,dhIn] = bck.backPropagation(rete,trainX,trainT,fa.derivSigmoide, fa.derivSigmoide, fa.derivCrossEntropy)
-
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
     time.sleep(0.1)
     [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,fa.derivSigmoide,fa.derivSigmoide,fa.derivCrossEntropy,fa.discesaDelGradiente)
 
     #Fare plot degli errori
+    plotErrori(err,errVal)
+
+    #Test
+    print("\n\n")
+
+
+    y = bck.simulaRete(rete,trainX)
+    print("TrainT: ",trainT[:,5])
+    print("\ny: ",y[:,5])
+
+
+
+
+
+#####   Funzioni di utilità ####
 
 def plotErrori(errore, erroreVal):
-    print("")
+    plt.plot(np.transpose(errore), label = 'errore')
+    plt.plot(np.transpose(erroreVal), label = 'errore Valutazione')
+    plt.show()
 
 
 
@@ -107,6 +116,16 @@ def plotImmagini(trainX, trainT):
         ax.set_title('Label: {}'.format(labels[i]))
     plt.tight_layout()
     plt.show()
+
+def infoShapes(X, labels, T, trainX, trainT, valX, valT):
+    print("X:\t",X.shape)
+    print("labels:\t",labels.shape)
+    print("T:\t",T.shape)
+    print("TrainX:\t",trainX.shape)
+    print("TrainT:\t",trainT.shape)
+    print("ValX:\t",valX.shape)
+    print("ValT:\t",valT.shape)
+
 
 
 main()
