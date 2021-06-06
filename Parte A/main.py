@@ -1,14 +1,20 @@
+import os,sys,inspect
+current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir) 
+
 import rete as r
 import numpy as np
 from keras.datasets import mnist
-import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
 import time
 
-import funzioniAttivazione as fa
+import funzioniAttivazioneErrore as f
+import regoleAggiornamento as ra
 import learningPhase as l
 import backPropagation as bck
 import funzioniMnist as fm
+import utility
 
 def main():
 
@@ -31,7 +37,7 @@ def main():
     tT = testT
     #Plot delle immagini
     if plot == 1:
-        plotImmagini(X, labels)
+        utility.plotImmagini(X, labels)
 
     #Pre-processing------------------------------------------------------------------------------
     # Converto in np array
@@ -52,35 +58,36 @@ def main():
 
 
     #Divisione del dataset in train-val-test (manca il test)    
-    trainX = X[1:600] #(599,784)
+    trainX = X[0:600] #(599,784)
     trainX = np.transpose(trainX) #(784,599)
-    trainT = T[:,1:600] #(10, 599)
+    trainT = T[:,0:600] #(10, 599)
     trainT = np.array(trainT)
 
-    valX = X[601:1200] #(199,784)
+    valX = X[601:700] #(199,784)
     valX = np.transpose(valX) #(784,199)
-    valT = T[:,601:1200] #(10,199)
+    valT = T[:,601:700] #(10,199)
     valT = np.array(valT)
     #-------------------------------------------------------------------------------------------
 
-    infoShapes(X, labels, T, trainX, trainT, valX, valT)
+    utility.infoShapes(X, labels, T, trainX, trainT, valX, valT)
 
     print("Caricamento completo!\n")
 
     #creazione rete e avvio learning
-    arrayFa = [fa.sigmoide,fa.sigmoide,fa.sigmoide,fa.sigmoide,fa.sigmoide]
-    rete = r.nuovaRete(len(trainX),numLayers,M,len(trainT),arrayFa,fa.sigmoide) 
+    arrayFa = [f.sigmoide,f.sigmoide,f.sigmoide,f.sigmoide,f.sigmoide]
+    rete = r.nuovaRete(len(trainX),numLayers,M,len(trainT),arrayFa,f.sigmoide) 
     r.infoRete(rete)
 
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,fa.derivSigmoide,fa.derivSigmoide,fa.derivCrossEntropy,fa.discesaDelGradiente)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.derivCrossEntropy,ra.discesaDelGradiente)
 
     #Fare plot degli errori
-    plotErrori(err,errVal)
+    utility.plotErrori(err,errVal)
 
     #Validazione modello
+    '''
     print("\n\nValidazione del modello su test di 100 coppie:")
     testX = np.transpose(testX[1:100])
     testT = testT[1:100]
@@ -91,44 +98,7 @@ def main():
         sommaErroreTest = sommaErroreTest + erroreTest
     erroreTest = sommaErroreTest / k
     print(">Errore test: ",erroreTest)
-
-
-
-
-
-#####   Funzioni di utilità #####
-
-def plotErrori(errore, erroreVal):
-    plt.plot(np.transpose(errore), label = 'errore')
-    plt.plot(np.transpose(erroreVal), label = 'errore Valutazione')
-    plt.show()
-
-def plotImmagini(trainX, trainT):
-    num = 10
-    images = trainX[:num]
-    labels = trainT[:num]
-
-    num_row = 2
-    num_col = 5
-    # plot images
-    fig, axes = plt.subplots(num_row, num_col, figsize=(1.5*num_col,2*num_row))
-    for i in range(num):
-        ax = axes[i//num_col, i%num_col]
-        ax.imshow(images[i], cmap='gray')
-        ax.set_title('Label: {}'.format(labels[i]))
-    plt.tight_layout()
-    plt.show()
-
-def infoShapes(X, labels, T, trainX, trainT, valX, valT):
-    print("X:\t",X.shape)
-    print("labels:\t",labels.shape)
-    print("T:\t",T.shape)
-    print("TrainX:\t",trainX.shape)
-    print("TrainT:\t",trainT.shape)
-    print("ValX:\t",valX.shape)
-    print("ValT:\t",valT.shape)
-
-
+    '''
 
 main()
 

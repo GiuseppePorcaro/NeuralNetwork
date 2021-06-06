@@ -1,6 +1,6 @@
 import numpy as np
 import backPropagation as b
-import funzioniAttivazione as f
+import funzioniAttivazioneErrore as f
 
 def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento):
     [dervivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
@@ -21,9 +21,10 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
         if batch == 0:
             #Learning di tipo on-line
             for n in range(0,len(x[0])):
-                #Provo a fare con un solo strato interno
+                #Reshape perchè python considera diversi le dimensioni (x,) e (x,1), i quali comunque sono vettori
                 xb = x[:,n].reshape((x.shape[0],1))
                 tb = t[:,n].reshape((t.shape[0],1))
+
                 [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput] = b.backPropagation(rete, xb, tb, derivFunActHidden, derivFunActOutput, derivFunErr)
 
                 rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput, dhInput)
@@ -47,6 +48,8 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
             reteScelta = rete
 
     return [reteScelta, err, errVal]
+
+#Qui implemento la k-fold Cross-Validation per la parte B del progetto
 
     
 

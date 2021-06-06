@@ -14,7 +14,7 @@ def nuovaRete(numeroInput, numeroStratiHidden, numeroNodiHidden, numeroNodiOutpu
     rete.W = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,numeroNodiHidden) #(m,m)
     rete.b = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,1) #(m,1)
     rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden) #(c,m)
-    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1) #(c,1)        
+    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1) #(c,1)
 
     #Dettagli della rete
     rete.nStrati = numeroStratiHidden
