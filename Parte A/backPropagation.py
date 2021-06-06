@@ -1,11 +1,9 @@
 import numpy as np
 
 def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
-    #Per adesso la rete effettua la back propagation bene solo per rete shallow
 
     if rete.nStrati == 1:
-        dhInput = 0 #serve solo per non far crashare quando la rete non ha più di un layers hidden
-        #Passo di forward step
+        dhInput = 0 #Siccome non è usato quando la rete ha un singolo layer, lo si inizializza per evitare che sia undefined
         [y,a1,z1,a2] = forwardStep(rete,x) #y:(c,1), a1:(m,1), z1:(m,1), a2:(c,1)
 
         #Passo di calcolo derivate
@@ -40,8 +38,6 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
     return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,dhInput]
 
 def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
-    #Questa funzione la uso per alleggerire il codice nella funzione della backprop.
-    #Nel caso la elimino
 
     deltaOut = derivFunOutupt(a2) #(c,N)
     deltaOut = deltaOut * derivFunErr(y,t) #(c,N)x(N,) = (c,N)
@@ -55,12 +51,6 @@ def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,r
     derivBiasOut = sum(deltaOut)
     derivBiasHidden = sum(deltaHidden)
 
-    #print("\n\nderivWOut.shape: ",derivWOut.shape)
-    #print("derivWHidden.shape: ",derivWhidden.shape)
-    #print("derivBiasOut.shape: ",derivBiasOut.shape)
-    #print("derivBiasHidden.shape: ",derivBiasHidden.shape)
-
-    
     return (derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,deltaHidden)
 
 def forwardStep(rete,x):

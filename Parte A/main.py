@@ -16,7 +16,7 @@ def main():
     eta = 0.01
     plot = 0
     test = 0
-    batch = 1
+    batch = 0
     numLayers = 1
     epocheMax = 200
     numClasses = 10
@@ -80,26 +80,28 @@ def main():
     #Fare plot degli errori
     plotErrori(err,errVal)
 
-    #Test
-    print("\n\n")
+    #Validazione modello
+    print("\n\nValidazione del modello su test di 100 coppie:")
+    testX = np.transpose(testX[1:100])
+    testT = testT[1:100]
+    sommaErroreTest = 0
+    for k in range(1,10):
+        yTest = bck.simulaRete(rete,testX)
+        erroreTest = fa.crossEntropy(yTest,testT)
+        sommaErroreTest = sommaErroreTest + erroreTest
+    erroreTest = sommaErroreTest / k
+    print(">Errore test: ",erroreTest)
 
 
-    y = bck.simulaRete(rete,trainX)
-    print("TrainT: ",trainT[:,5])
-    print("\ny: ",y[:,5])
 
 
 
-
-
-#####   Funzioni di utilità ####
+#####   Funzioni di utilità #####
 
 def plotErrori(errore, erroreVal):
     plt.plot(np.transpose(errore), label = 'errore')
     plt.plot(np.transpose(erroreVal), label = 'errore Valutazione')
     plt.show()
-
-
 
 def plotImmagini(trainX, trainT):
     num = 10
@@ -129,3 +131,16 @@ def infoShapes(X, labels, T, trainX, trainT, valX, valT):
 
 
 main()
+
+
+
+#Domande da fare al professore al ricevimento:
+#1) La modalità batch se è corretta in quel modo
+#2) La propagazione all'ìndietro dell'errore se va bene come l'ho fatta io
+#3) Il valore di output delle y sia come quelle che escono a me (che sono come quelle che escono al prof), cioè 
+#   tutti valori vicino ad 1, es: 0.98976 0.99485 0.9854245, e che quindi non siano dello stesso tipo delle etichette
+#   cioè del tipo [0,0,0,1,0,0,0,0,0,0]
+#4) Se la funzione di softmax è corretta: ossia fare e^y/(e^y).sum() - t
+#5) Effettuare la trasposta dei dati si può fare?
+#6) Qualunque funzione di attivazione -> implementato come array di funzioni di attivazione
+#7) Se va bene che i layer interni abbiano tutti lo stesso numero di neuroni o bisogna cambiare

@@ -6,8 +6,6 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     [dervivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
     #Learning phase
 
-    #Per il fatto del "rete multistrato con qualsiasi funzione di attivazione per ciascuno strato"
-    #Devo prendere in input un array di deriv funzione di attivazione hidden
     err = np.ones((1,N))
     errVal = np.ones((1,N))
     yVal = b.simulaRete(rete,xVal)

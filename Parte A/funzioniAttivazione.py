@@ -35,6 +35,11 @@ def crossEntropy(Y,T): #ok
     e=-(T * np.log(Y)).sum()
     return e
 
+def crossEntropySoftmax(y,t):
+    z = np.exp(y)/np.exp(y).sum() #softmax
+    e = z - t
+    return e
+
 def derivCrossEntropy(Y,T):
     e = -(T / Y).sum()
     return e
