@@ -23,15 +23,17 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
 def forwardStep(rete,x):
 
     a1 = np.dot(rete.W1,x) + rete.b1 #(m,d)x(d,) + (m,1) = (m,) + (m,1) = (m,)
-    z1 = rete.f[0](a1) #(m,)
+    z1 = rete.f(a1) #(m,)
     a2 = np.dot(rete.WOutput,z1) + rete.bOutput #(c,m)x(m,) + (c,1) = (c,) + (c,1) = (c,)
     y = rete.g(a2) #(c,)
 
     return (y,a1,z1,a2)
 
 def simulaRete(rete,x):
-
+    
     a1 = np.dot(rete.W1,x) + rete.b1 #(m,d)x(d,N) + (m,1) = (m,N) + (m,1) = (m,N)
-    z1 = rete.f[0](a1) #(m,N)
+    z1 = rete.f(a1) #(m,N)
     a2 = np.dot(rete.WOutput,z1) + rete.bOutput #(c,m)x(m,N) + (c,1) = (c,N) + (c,1) = (c,N)
     y = rete.g(a2) #(c,N)
+
+    return y

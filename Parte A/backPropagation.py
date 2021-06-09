@@ -27,7 +27,6 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
             derivWhidden[i,:,:] = np.dot(dh,np.transpose(z1[i-1]))
             derivBiasHidden[i,:] = sum(dh)
 
-        
         dh = np.dot(np.transpose(rete.W[0,:,:]),dh)
         dh = dh * derivFunHidden(a1[0,:,:])
 
@@ -40,7 +39,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
 def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
 
     deltaOut = derivFunOutupt(a2) #(c,N)
-    deltaOut = deltaOut * derivFunErr(y,t) #(c,N)x(N,) = (c,N)
+    deltaOut = deltaOut * derivFunErr(y,t) #(c,N)x(N,) = (c,N) - deve essere prodotto punto punto
 
     deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut) #(m,c)x(c,N) = (m,N)
     deltaHidden = deltaHidden * derivFunHidden(a1) #(m,N)x(m,N) = (m,N)

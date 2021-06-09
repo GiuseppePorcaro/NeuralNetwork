@@ -12,10 +12,10 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     minErr = f.sumOfSquares(yVal,tVal)
     reteScelta = rete
 
-    print("Epoca\t\t Errore\t\t\t\t Errore Valutazione")
+    print("\nEpoca\t\t Errore\t\t\t\t Errore Valutazione")
     print("---------------------------------------------------------------------------")
     if batch == 1:
-        eta = 0.5
+        eta = 0.005
     
     for epoca in range(0,N):
         if batch == 0:
@@ -49,7 +49,6 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
 
     return [reteScelta, err, errVal]
 
-#Qui implemento la k-fold Cross-Validation per la parte B del progetto
 
     
 

@@ -7,6 +7,7 @@ import time
 import numpy as np
 from keras.datasets import mnist
 from sklearn.utils import shuffle
+from sklearn.model_selection import KFold
 
 import rete as r
 import utility as u
@@ -20,6 +21,7 @@ def main():
 
     #Iper-parametri fissati del modello
     M = 50
+    k = 10
     plot = 0
     test = 0
     etaPos = 1.2
@@ -33,8 +35,6 @@ def main():
     time.sleep(0.2)
 
     (X, labels), (testX,testT) = mnist.load_data()
-    tX = testX
-    tT = testT
     #Plot delle immagini
     if plot == 1:
         u.plotImmagini(X, labels)
@@ -57,7 +57,7 @@ def main():
     T = fm.getTargetsFromLabels(labels)
 
 
-    #Divisione del dataset in train-val-test (manca il test)    
+    #Divisione del dataset. QUI È DA METTERE SOLO IL DATASET X E DA QUESTO TIRARE FUORI TRAIN E TEST PER IL KFOLD   
     trainX = X[0:600] #(599,784)
     trainX = np.transpose(trainX) #(784,599)
     trainT = T[:,0:600] #(10, 599)
@@ -79,6 +79,27 @@ def main():
 
     #Fase di learning - DA IMPLEMENTARE TRAMITE TECNICA K-FOLD CROSS-VALIDATION
     [rete,err,errVal] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.derivCrossEntropy,ra.RPROP)
+
+    #u.plotErrori(err,errVal)
+
+    return 0
+    print("Fase di learning:")
+    kf = KFold(n_splits=k)
+    print("Numero di fold: ",kf.get_n_splits(trainX))
+
+    valutazioni = np.zeros((10,1))
+    for train_index, test_index in kf.split(trainX):
+        train_x, test_x = trainX[train_index] , trainX[test_index]
+        train_t , test_t = trainT[:,train_index] , trainT[:,test_index]
+
+        train_x , test_x = np.transpose(train_x) , np.transpose(test_x)
+
+
+
+
+    
+
+
 
     
 

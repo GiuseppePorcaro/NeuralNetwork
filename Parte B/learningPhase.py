@@ -1,5 +1,6 @@
 import numpy as np
 import backPropagation as b
+import regolaAggiornamento as r
 import funzioniAttivazioneErrore as f
 
 def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento):
@@ -10,25 +11,38 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
     
     err = np.ones((1,N))
     errVal = np.ones((1,N))
-    yVal = b.simulaRete(rete,xVal)
-    minErr = f.sumOfSquares(yVal,tVal)
+    yVal = b.simulaRete(rete,valX)
+    minErr = f.sumOfSquares(yVal,valT)
     reteScelta = rete
 
     eta = 0.01
-
     for epoca in range(0,N):
-
+        print("epoca: ",epoca)
         #Learning Batch
-        [dervivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
+        [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
 
         if epoca == 0:
             #Alla prima epoca, non avendo le derivate precedenti, faccio la discesa del gradiente
-            rete = discesaDelGradiente(rete,eta,derivHidden,derivOut,derivBiasHidden,derivBiasOut)
+            rete = r.discesaDelGradiente(rete,eta,derivW1,derivW2,derivBiasHidden,derivBiasOutput)
         else:
             #Dalla seconda epoca in poi posso effettuare la RPROP
-            rete = regolaAggiornamento(rete, etaPos, etaNeg, dervivW1,derivW2,derivBiasHidden, derivBiasOutput, derivW1Pre, derivW2Pre, derivBiasHiddenPre, derivBiasOutputPre):
+            rete = regolaAggiornamento(rete, etaPos, etaNeg, derivW1,derivW2,derivBiasHidden, derivBiasOutput, derivW1Pre, derivW2Pre, derivBiasHiddenPre, derivBiasOutputPre)
 
-        [derivW1Pre,derivW2pre,derivBiasHiddenPre,derivBiasOutputPre] = [dervivW1,derivW2,derivBiasHidden,derivBiasOutput]
+        [derivW1Pre,derivW2pre,derivBiasHiddenPre,derivBiasOutputPre] = [derivW1,derivW2,derivBiasHidden,derivBiasOutput]
+    
+        #Vado a verificare l'errore sia sul train-set sia sul validation-set
+        y = b.simulaRete(rete,x)
+        yVal = b.simulaRete(rete,valX)
+        err[0][epoca] = f.crossEntropy(y,t)
+        errVal[0][epoca] = f.crossEntropy(yVal,valT)
+
+        #Vado a salvarmi la rete che minimizza l'errore, usando il validation-set
+        if errVal[0][epoca] < minErr:
+            minErr = errVal[0][epoca]
+            reteScelta = rete
+    
+    return [rete,err,errVal]
+
 
     
 

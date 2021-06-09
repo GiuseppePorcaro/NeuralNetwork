@@ -19,10 +19,10 @@ import utility
 def main():
 
     M = 50
-    eta = 0.01
+    eta = 0.00001
     plot = 0
     test = 0
-    batch = 0
+    batch = 1
     numLayers = 1
     epocheMax = 200
     numClasses = 10
@@ -63,9 +63,9 @@ def main():
     trainT = T[:,0:600] #(10, 599)
     trainT = np.array(trainT)
 
-    valX = X[601:700] #(199,784)
+    valX = X[601:1201] #(199,784)
     valX = np.transpose(valX) #(784,199)
-    valT = T[:,601:700] #(10,199)
+    valT = T[:,601:1201] #(10,199)
     valT = np.array(valT)
     #-------------------------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ def main():
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.derivCrossEntropy,ra.discesaDelGradiente)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.crossEntropySoftmax,ra.discesaDelGradiente)
 
     #Fare plot degli errori
     utility.plotErrori(err,errVal)
@@ -101,16 +101,3 @@ def main():
     '''
 
 main()
-
-
-
-#Domande da fare al professore al ricevimento:
-#1) La modalità batch se è corretta in quel modo
-#2) La propagazione all'ìndietro dell'errore se va bene come l'ho fatta io
-#3) Il valore di output delle y sia come quelle che escono a me (che sono come quelle che escono al prof), cioè 
-#   tutti valori vicino ad 1, es: 0.98976 0.99485 0.9854245, e che quindi non siano dello stesso tipo delle etichette
-#   cioè del tipo [0,0,0,1,0,0,0,0,0,0]
-#4) Se la funzione di softmax è corretta: ossia fare e^y/(e^y).sum() - t
-#5) Effettuare la trasposta dei dati si può fare?
-#6) Qualunque funzione di attivazione -> implementato come array di funzioni di attivazione
-#7) Se va bene che i layer interni abbiano tutti lo stesso numero di neuroni o bisogna cambiare

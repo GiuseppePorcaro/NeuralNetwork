@@ -7,7 +7,7 @@ def nuovaRete(numeroInput, numeroNodiHidden, numeroNodiOutput,funAttivazioneHidd
     rete.nome = "Rete Neurale MultiStrato"
 
     #Generazione casuale degli iper parametri della rete.
-    SIGMA = 0.1
+    SIGMA = 0.05
     rete.W1 = SIGMA * np.random.randn(numeroNodiHidden,numeroInput) #(m,d)
     rete.b1 = SIGMA * np.random.randn(numeroNodiHidden,1) #(m,1)
     rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden) #(c,m)
@@ -15,7 +15,9 @@ def nuovaRete(numeroInput, numeroNodiHidden, numeroNodiOutput,funAttivazioneHidd
 
     #Ulteriore step di aggiornamento per i pesi
     rete.deltaHidden = SIGMA * np.random.randn(numeroNodiHidden,numeroInput) #(m,d)
-    rete.deltaOutput = SIGMA * np.random.randn(numeroNodiHidden,numeroInput) #(m,d)        
+    rete.deltaOutput = SIGMA * np.random.randn(numeroNodiHidden,1) #(m,d)
+    rete.deltaBHidden = SIGMA * np.random.randn(numeroNodiHidden,numeroInput) #(m,d)
+    rete.deltaBOutput = SIGMA * np.random.randn(numeroNodiOutput,1) #(m,d)       
 
     #Dettagli della rete
     rete.d = numeroInput
@@ -32,10 +34,10 @@ def infoRete(rete):
     ##Stampa le informazioni della rete come il  numero di strati, di elementi input, numero nodi interni, ecc...
     print("Informazioni sulla rete")
 
-    print("W1: [",rete.m,"x",rete.d,"]")
-    print("b1: [",rete.m,"x",1,"]")
-    print("WOutput: [",rete.c,"x",rete.m,"]")
-    print("bOutput: [",rete.c,"x",1,"]")
+    print("W1: ", rete.W1.shape)
+    print("b1: ", rete.b1.shape)
+    print("WOutput: ", rete.WOutput.shape)
+    print("bOutput: ", rete.bOutput.shape)
 
 def stampaIperParametri(rete):
     ##Stampa tutti i pesi e bias della rete data in input
