@@ -13,7 +13,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     reteScelta = rete
 
     if batch == 1:
-        eta = 0.000005
+        eta = 0.05
     
     print("-Eta:\t\t",eta)
 

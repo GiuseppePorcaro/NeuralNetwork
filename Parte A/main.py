@@ -20,11 +20,11 @@ print("Fatto!\n")
 
 def main():
 
-    eta = 0.001
+    eta = 0.1
     plot = 0
     test = 0
-    batch = 1
-    numLayers = 3
+    batch = 0
+    numLayers = 1
     epocheMax = 200
     numClasses = 10
     numFeatures = 28*28
@@ -56,6 +56,7 @@ def main():
 
     #Ottengo le classi dalle etichette
     T = fm.getTargetsFromLabels(labels)
+    testT = fm.getTargetsFromLabels(testT)
 
 
     #Divisione del dataset in train-val-test (manca il test)    
@@ -75,8 +76,8 @@ def main():
     print("Caricamento completo!\n")
 
     #creazione rete e avvio learning------------------------------------------------------------
-    arrayFa = [f.sigmoide,f.sigmoide,f.sigmoide] #Array di funzioni attivazione
-    arrayNumNeuroni = [50,40,30,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
+    arrayFa = [f.sigmoide] #Array di funzioni attivazione
+    arrayNumNeuroni = [50,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
 
     #Controllo di poter creare la rete
     if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
@@ -96,17 +97,33 @@ def main():
     utility.plotErrori(err,errVal)
 
     #Validazione modello
-    '''
     print("\n\nValidazione del modello su test di 100 coppie:")
-    testX = np.transpose(testX[1:100])
-    testT = testT[1:100]
+    testX = np.transpose(testX[0:100])
+    testT = testT[:,0:100]
     sommaErroreTest = 0
-    for k in range(1,10):
+    for k in range(1,11):
         yTest = bck.simulaRete(rete,testX)
-        erroreTest = fa.crossEntropy(yTest,testT)
+        erroreTest = f.crossEntropy(yTest,testT)
         sommaErroreTest = sommaErroreTest + erroreTest
     erroreTest = sommaErroreTest / k
     print(">Errore test: ",erroreTest)
-    '''
+
+    ##########A QUANTO PARE I VALORI OUTPUT NON SONO QUELLI CORRETTI
+    ######CONTROLLARE ANCHE DAL CODICE MATLAB DEL PROFESSORE SE LE Y CORRISPONDONO ALLE ETICHETTE
+    yTest = bck.simulaRete(rete,testX)
+    yTest = f.softmax(yTest)
+    print("\n\n y[:,5]: ", yTest[:,5])
+    print("t[5] ", testT[:,5])
+    print("label output: ",fromOutputToLabel(yTest[:,5]))
+    
+
+def fromOutputToLabel(y):
+    i = 0
+    max = -1
+    for k in range(0,10):
+        if y[k] > max:
+            max = y[k]
+            i = k
+    return i
 
 main()

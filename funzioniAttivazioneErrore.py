@@ -8,6 +8,12 @@ def identity(x): #ok
     y = x
     return y
 
+def RELU(x):
+    return x * (x > 0)
+
+def LRELU(x,beta):
+    return beta * x * (x > 0)
+
 def sumOfSquares(y,t):
     e = (1/2) * (np.power(y-t,2).sum())
     return e
@@ -15,6 +21,10 @@ def sumOfSquares(y,t):
 def crossEntropy(Y,T): #ok
     e=-(T * np.log(Y)).sum()
     return e
+
+def softmax(x):
+    return np.exp(x)/np.exp(x).sum()
+
 
 def crossEntropySoftmax(y,t):
     z = np.exp(y)/np.exp(y).sum() #softmax

@@ -30,16 +30,15 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
             dh = dh * derivFunHidden(a1[0][i+1])
 
             derivWhidden[0][i] = np.dot(dh,np.transpose(z1[0][i]))
-            derivBiasHidden[0][i] = sum(dh)
+            derivBiasHidden[0][i] = dh.sum()
 
         #Calcolo derivata primo layer hidden
         dh = np.dot(np.transpose(rete.W[0][0]),dh)
         dh = dh * derivFunHidden(a1[0][0])
 
         dhInput = np.dot(dh,np.transpose(x))
-        dbhInput = sum(dh)
+        dbhInput = dh.sum()
 
-    
     return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,dhInput,dbhInput]
 
 def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
@@ -53,8 +52,8 @@ def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,r
     derivWOut = np.dot(deltaOut,np.transpose(z1)) 
     derivWhidden = np.dot(deltaHidden,np.transpose(x))
 
-    derivBiasOut = sum(deltaOut)
-    derivBiasHidden = sum(deltaHidden)
+    derivBiasOut = deltaOut.sum()
+    derivBiasHidden = deltaHidden.sum()
 
     return (derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,deltaHidden)
 
