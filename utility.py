@@ -31,3 +31,12 @@ def infoShapes(X, labels, T, trainX, trainT, valX, valT):
     print("TrainT:\t",trainT.shape)
     print("ValX:\t",valX.shape)
     print("ValT:\t",valT.shape)
+
+def checkCreazioneRete(numLayersHidden, arr):
+    #Tale funzione controlla che la dimensione dell'array di funzioni attivazione
+    #o numero di nodi hidden sia della dimensione giusta per creare la rete multistrato
+    if numLayersHidden == len(arr):
+        return True
+    return False
+
+

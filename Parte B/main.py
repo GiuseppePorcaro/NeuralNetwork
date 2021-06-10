@@ -35,6 +35,7 @@ def main():
     time.sleep(0.2)
 
     (X, labels), (testX,testT) = mnist.load_data()
+    #Bisogna controllare che immagini ed etichette siano correttamente impostate
     #Plot delle immagini
     if plot == 1:
         u.plotImmagini(X, labels)
@@ -83,12 +84,15 @@ def main():
     #u.plotErrori(err,errVal)
 
     return 0
-    print("Fase di learning:")
+    #Fase di scelta del modello della rete
+    print("Fase di valutazione del modello:")
     kf = KFold(n_splits=k)
     print("Numero di fold: ",kf.get_n_splits(trainX))
 
     valutazioni = np.zeros((10,1))
     for train_index, test_index in kf.split(trainX):
+        #Creare la rete e gettarla via dopo la valutazione su questo fold
+
         train_x, test_x = trainX[train_index] , trainX[test_index]
         train_t , test_t = trainT[:,train_index] , trainT[:,test_index]
 

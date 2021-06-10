@@ -1,3 +1,4 @@
+print("Caricamento librerie...", end='', flush=True)
 import os,sys,inspect
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
@@ -15,15 +16,15 @@ import learningPhase as l
 import backPropagation as bck
 import funzioniMnist as fm
 import utility
+print("Fatto!\n")
 
 def main():
 
-    M = 50
-    eta = 0.00001
+    eta = 0.001
     plot = 0
     test = 0
     batch = 1
-    numLayers = 1
+    numLayers = 3
     epocheMax = 200
     numClasses = 10
     numFeatures = 28*28
@@ -73,15 +74,23 @@ def main():
 
     print("Caricamento completo!\n")
 
-    #creazione rete e avvio learning
-    arrayFa = [f.sigmoide,f.sigmoide,f.sigmoide,f.sigmoide,f.sigmoide]
-    rete = r.nuovaRete(len(trainX),numLayers,M,len(trainT),arrayFa,f.sigmoide) 
+    #creazione rete e avvio learning------------------------------------------------------------
+    arrayFa = [f.sigmoide,f.sigmoide,f.sigmoide] #Array di funzioni attivazione
+    arrayNumNeuroni = [50,40,30,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
+
+    #Controllo di poter creare la rete
+    if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
+        print("Non è possibile costruire tale modello di rete:")
+        print(">La dimensione di uno degli array (Funzione attivazioni o numNeuroni) non è corretta!")
+        return 0
+
+    rete = r.nuovaRete(len(trainX),numLayers,arrayNumNeuroni,arrayFa,f.sigmoide) 
     r.infoRete(rete)
 
     #Fase di learning
-    print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,"\n-Eta:\t",eta,end='\n',flush=True)
+    print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.crossEntropySoftmax,ra.discesaDelGradiente)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.derivCrossEntropy,ra.discesaDelGradiente)
 
     #Fare plot degli errori
     utility.plotErrori(err,errVal)

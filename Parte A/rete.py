@@ -2,25 +2,34 @@ import numpy as np
 class Rete:
     pass
 
-def nuovaRete(numeroInput, numeroStratiHidden, numeroNodiHidden, numeroNodiOutput,arrFunAttivazioneHidden, funAttivazioneOutput):
+def nuovaRete(numeroInput, numeroStratiHidden, arrNumNeuroni, arrFunAttivazioneHidden, funAttivazioneOutput):
     rete = Rete()
     rete.nome = "Rete Neurale MultiStrato"
 
     #Generazione casuale degli iper parametri della rete. Per adesso dividiamo primo strato hidden dagli altri
     #a causa del diverso numero di dati in input
     SIGMA = 0.1
-    rete.W1 = SIGMA * np.random.randn(numeroNodiHidden,numeroInput) #(m,d)
-    rete.b1 = SIGMA * np.random.randn(numeroNodiHidden,1) #(m,1)
-    rete.W = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,numeroNodiHidden) #(m,m)
-    rete.b = SIGMA * np.random.randn(numeroStratiHidden-1,numeroNodiHidden,1) #(m,1)
-    rete.WOutput = SIGMA * np.random.randn(numeroNodiOutput,numeroNodiHidden) #(c,m)
-    rete.bOutput = SIGMA * np.random.rand(numeroNodiOutput,1) #(c,1)
+    rete.W1 = SIGMA * np.random.randn(arrNumNeuroni[0],numeroInput) 
+    rete.b1 = SIGMA * np.random.randn(arrNumNeuroni[0],1) 
+
+    #Inizializzo array di pesi e bias dei nodi interni per qualunque numero di nodi
+    rete.W = np.empty((1,numeroStratiHidden-1), dtype = object)
+    rete.b = np.empty((1,numeroStratiHidden-1), dtype = object)
+
+    k = 1
+    for i in range(0,numeroStratiHidden-1):
+        rete.W[0][i] = SIGMA * np.random.randn(arrNumNeuroni[k],arrNumNeuroni[k-1]) 
+        rete.b[0][i] = SIGMA * np.random.randn(arrNumNeuroni[k],1)
+        k=k+1
+    
+    rete.WOutput = SIGMA * np.random.randn(arrNumNeuroni[k],arrNumNeuroni[k-1]) 
+    rete.bOutput = SIGMA * np.random.rand(arrNumNeuroni[k],1) 
 
     #Dettagli della rete
     rete.nStrati = numeroStratiHidden
     rete.d = numeroInput
-    rete.m = numeroNodiHidden
-    rete.c = numeroNodiOutput
+    rete.m = arrNumNeuroni[0:len(arrNumNeuroni)-2]
+    rete.c = arrNumNeuroni[len(arrNumNeuroni)-1]
     
     #Funzioni di attivazione
     rete.f = arrFunAttivazioneHidden #array di funzioni di attivazione per i strati hidden
@@ -33,22 +42,25 @@ def infoRete(rete):
     print("Informazioni sulla rete")
 
     print("Numero strati interni: ",rete.nStrati)
-    print("W1: [",rete.m,"x",rete.d,"]")
-    print("b1: [",rete.m,"x",1,"]")
+    print("W1:", rete.W1.shape)
+    print("b1: ", rete.b1.shape,"\n")
 
     if rete.nStrati > 1:
-        print("W: [",rete.m,"x",rete.m,"]")
-        print("b: [",rete.m,"x",1,"]")
+        for i in range(0,rete.nStrati-1):
+            print("Layer[",i+1,"]:")
+            print("W: ", rete.W[0][i].shape)
+            print("b: ", rete.b[0][i].shape,"\n")
 
-    print("WOutput: [",rete.c,"x",rete.m,"]")
-    print("bOutput: [",rete.c,"x",1,"]")
+    print("WOutput: ", rete.WOutput.shape)
+    print("bOutput: ", rete.bOutput.shape)
 
 def stampaIperParametri(rete):
     ##Stampa tutti i pesi e bias della rete data in input
 
     print("Peso primo strato interno:\n",rete.W1,"\n")
     print("Bias primo strato interno:\n",rete.b1,"\n\nPesi strati hidden")
-    print(rete.W,"\n\nBias Strati interni")
-    print(rete.b,"\n\nPesi Strato Output")
+    for i in range(0,rete.nStrati-1):
+        print(rete.W[0][i],"\n\nBias Strati interni")
+        print(rete.b[0][i],"\n\nPesi Strato Output")
     print(rete.WOutput,"\n\nBias Strat Outuput")
     print(rete.bOutput,"\n")

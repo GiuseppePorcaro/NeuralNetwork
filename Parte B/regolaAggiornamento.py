@@ -3,6 +3,7 @@ import numpy as np
 def RPROP(rete, etaPos, etaNeg, derivHidden,derivOutput,derivBHidden, derivBOutput, derivHiddenPre, derivOutputPre, derivBHiddenPre, derivBOutputPre):
     etaPosMax = 2.0
     etaNegMin = 0.001
+    
     #regola di aggiornamento resilient backPropagation
     if derivHidden * derivHiddenPre < 0:
         rete.deltaHidden = max(etaNegMin,rete.deltaHidden * etaNeg)
@@ -24,8 +25,6 @@ def RPROP(rete, etaPos, etaNeg, derivHidden,derivOutput,derivBHidden, derivBOutp
     if derivBOutput * derivBOutputPre > 0:
         rete.deltaBOutput = min(etaPosMax,rete.deltaBOutput * etaPos)
 
-    #Capire di quale funzione sign() si tratta e implementare l'aggiornamento dei pesi.
-    #Forse da fare anche con i bias
     rete.W1 = rete.W1 - np.sign(derivHidden) * rete.deltaHidden
     rete.b1 = rete.b1 - np.sign(derivBHidden) * rete.deltaBHidden
     rete.WOutput = rete.WOutput - np.sign(derivOutput) * rete.deltaOutput
