@@ -1,3 +1,4 @@
+print("Caricamento librerie...", end='', flush=True)
 import os,sys,inspect
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
@@ -16,6 +17,7 @@ import funzioniMnist as fm
 import backPropagation as b
 import regolaAggiornamento as ra
 import funzioniAttivazioneErrore as f
+print("Fatto!\n")
 
 def main():
 
@@ -24,9 +26,9 @@ def main():
     k = 10
     plot = 0
     test = 0
-    etaPos = 1.2
-    etaNeg = 0.5
-    epocheMax = 200
+    etaPos = 1.00000001
+    etaNeg = 0.00000005
+    epocheMax = 50
     numClasses = 10
     numFeatures = 28*28
 
@@ -59,14 +61,14 @@ def main():
 
 
     #Divisione del dataset. QUI È DA METTERE SOLO IL DATASET X E DA QUESTO TIRARE FUORI TRAIN E TEST PER IL KFOLD   
-    trainX = X[0:600] #(599,784)
+    trainX = X[0:5000] #(599,784)
     trainX = np.transpose(trainX) #(784,599)
-    trainT = T[:,0:600] #(10, 599)
+    trainT = T[:,0:5000] #(10, 599)
     trainT = np.array(trainT)
 
-    valX = X[601:700] #(199,784)
+    valX = X[601:1300] #(199,784)
     valX = np.transpose(valX) #(784,199)
-    valT = T[:,601:700] #(10,199)
+    valT = T[:,601:1300] #(10,199)
     valT = np.array(valT)
     #-------------------------------------------------------------------------------------------
 
@@ -77,11 +79,12 @@ def main():
     #creazione rete e avvio learning
     rete = r.nuovaRete(len(trainX),M,len(trainT),f.sigmoide,f.sigmoide) 
     r.infoRete(rete)
+    #r.stampaIperParametri(rete)
 
     #Fase di learning - DA IMPLEMENTARE TRAMITE TECNICA K-FOLD CROSS-VALIDATION
-    [rete,err,errVal] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.derivCrossEntropy,ra.RPROP)
+    [rete,err,errVal] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.crossEntropySoftmax, ra.RPROP)
 
-    #u.plotErrori(err,errVal)
+    u.plotErrori(err,errVal)
 
     return 0
     #Fase di scelta del modello della rete

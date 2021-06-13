@@ -3,7 +3,7 @@ import backPropagation as b
 import funzioniAttivazioneErrore as f
 
 def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento):
-    [dervivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
+    [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
     #Learning phase
 
     err = np.ones((1,N))
@@ -13,7 +13,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     reteScelta = rete
 
     if batch == 1:
-        eta = 0.05
+        eta = 0.000005
     
     print("-Eta:\t\t",eta)
 
@@ -34,7 +34,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
             #Learning di tipo batch
             [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
 
-            rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput,dhInput, dbhInput)
+            rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput,dhInput, dbhInput)    
         
         #Vado a simulare gli output della rete dopo l'aggiormenento alla epochesima-epoca e calcolo l'errore
         y = b.simulaRete(rete,x)

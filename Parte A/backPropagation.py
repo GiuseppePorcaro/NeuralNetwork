@@ -30,30 +30,37 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
             dh = dh * derivFunHidden(a1[0][i+1])
 
             derivWhidden[0][i] = np.dot(dh,np.transpose(z1[0][i]))
-            derivBiasHidden[0][i] = dh.sum()
+            derivBiasHidden[0][i] = dh.sum(axis=1)
+            derivBiasHidden[0][i] = derivBiasHidden[0][i].reshape(len(derivBiasHidden[0][i]),1)
+
 
         #Calcolo derivata primo layer hidden
         dh = np.dot(np.transpose(rete.W[0][0]),dh)
         dh = dh * derivFunHidden(a1[0][0])
 
         dhInput = np.dot(dh,np.transpose(x))
-        dbhInput = dh.sum()
+        dbhInput = dh.sum(axis=1)
+        dbhInput = dbhInput.reshape(len(dbhInput),1)
 
     return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,dhInput,dbhInput]
 
 def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
 
-    deltaOut = derivFunOutupt(a2) #(c,N)
+    derivErr = derivFunErr(y,t)
+
+    deltaOut = derivFunOutupt(a2)
     deltaOut = deltaOut * derivFunErr(y,t)
 
     deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut) 
-    deltaHidden = deltaHidden * derivFunHidden(a1) 
+    deltaHidden = deltaHidden * derivFunHidden(a1)
 
     derivWOut = np.dot(deltaOut,np.transpose(z1)) 
     derivWhidden = np.dot(deltaHidden,np.transpose(x))
 
-    derivBiasOut = deltaOut.sum()
-    derivBiasHidden = deltaHidden.sum()
+    derivBiasOut = deltaOut.sum(axis=1)
+    derivBiasHidden = deltaHidden.sum(axis=1)
+    derivBiasOut = derivBiasOut.reshape(len(derivBiasOut),1)
+    derivBiasHidden = derivBiasHidden.reshape(len(derivBiasHidden),1)
 
     return (derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,deltaHidden)
 
@@ -63,7 +70,7 @@ def forwardStep(rete,x):
         a1 = np.dot(rete.W1,x) + rete.b1 
         z1 = rete.f[0](a1) 
         a2 = np.dot(rete.WOutput,z1) + rete.bOutput 
-        y = rete.g(a2) 
+        y = rete.g(a2)
     else:
 
         a1 = np.empty((1,rete.nStrati), dtype = object)

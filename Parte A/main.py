@@ -23,7 +23,7 @@ def main():
     eta = 0.1
     plot = 0
     test = 0
-    batch = 0
+    batch = 1
     numLayers = 1
     epocheMax = 200
     numClasses = 10

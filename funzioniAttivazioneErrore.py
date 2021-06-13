@@ -14,11 +14,11 @@ def RELU(x):
 def LRELU(x,beta):
     return beta * x * (x > 0)
 
-def sumOfSquares(y,t):
+def sumOfSquares(y,t): #OK
     e = (1/2) * (np.power(y-t,2).sum())
     return e
 
-def crossEntropy(Y,T): #ok
+def crossEntropy(Y,T): #OK
     e=-(T * np.log(Y)).sum()
     return e
 
@@ -31,15 +31,16 @@ def crossEntropySoftmax(y,t):
     e = z - t
     return e
 
-def derivCrossEntropy(Y,T):
-    e = -(T / Y).sum()
+def derivCrossEntropy(Y,T): #OK
+    e = -(T / Y).sum(axis=1)
+    e = e.reshape(len(e),1)
     return e
 
-def derivSumOfSquares(y,t): #ok
+def derivSumOfSquares(y,t): #OK
     e = y-t
     return e
 
-def derivSigmoide(x): #ok
+def derivSigmoide(x): #OK
     z = sigmoide(x)
     y = z * (1-z)
     return y

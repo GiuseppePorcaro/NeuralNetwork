@@ -23,7 +23,7 @@ def nuovaRete(numeroInput, numeroStratiHidden, arrNumNeuroni, arrFunAttivazioneH
         k=k+1
     
     rete.WOutput = SIGMA * np.random.randn(arrNumNeuroni[k],arrNumNeuroni[k-1]) 
-    rete.bOutput = SIGMA * np.random.rand(arrNumNeuroni[k],1) 
+    rete.bOutput = SIGMA * np.random.randn(arrNumNeuroni[k],1) 
 
     #Dettagli della rete
     rete.nStrati = numeroStratiHidden
