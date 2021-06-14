@@ -9,6 +9,8 @@ import numpy as np
 from keras.datasets import mnist
 from sklearn.utils import shuffle
 import time
+import matplotlib.pyplot as plt
+
 
 import funzioniAttivazioneErrore as f
 import regoleAggiornamento as ra
@@ -25,7 +27,7 @@ def main():
     test = 0
     batch = 1
     numLayers = 1
-    epocheMax = 200
+    epocheMax = 500
     numClasses = 10
     numFeatures = 28*28
 
@@ -60,14 +62,14 @@ def main():
 
 
     #Divisione del dataset in train-val-test (manca il test)    
-    trainX = X[0:600] #(599,784)
+    trainX = X[0:5000] #(599,784)
     trainX = np.transpose(trainX) #(784,599)
-    trainT = T[:,0:600] #(10, 599)
+    trainT = T[:,0:5000] #(10, 599)
     trainT = np.array(trainT)
 
-    valX = X[601:1201] #(199,784)
+    valX = X[601:2001] #(199,784)
     valX = np.transpose(valX) #(784,199)
-    valT = T[:,601:1201] #(10,199)
+    valT = T[:,601:2001] #(10,199)
     valT = np.array(valT)
     #-------------------------------------------------------------------------------------------
 
@@ -111,10 +113,39 @@ def main():
     ##########A QUANTO PARE I VALORI OUTPUT NON SONO QUELLI CORRETTI
     ######CONTROLLARE ANCHE DAL CODICE MATLAB DEL PROFESSORE SE LE Y CORRISPONDONO ALLE ETICHETTE
     yTest = bck.simulaRete(rete,testX)
-    yTest = f.softmax(yTest)
-    print("\n\n y[:,5]: ", yTest[:,5])
-    print("t[5] ", testT[:,5])
-    print("label output: ",fromOutputToLabel(yTest[:,5]))
+    '''
+    for i in range(0,10):
+        yCheck = yTest[:,i]
+        print("yCheck: ",yCheck)
+        yCheck = fromOutputToLabel(yCheck)
+        xCheck = testX[:,i]
+        tCheck = testT[:,i]
+        print("tCheck: ",tCheck)
+        tCheck = fromOutputToLabel(tCheck)
+    
+        print("yCheck: ",yCheck)
+        print("tCheck: ",tCheck)
+
+        xCheck = xCheck * 255
+        xCheck = xCheck.reshape(28,28)
+        plt.imshow(xCheck)
+        plt.show()
+    '''
+
+    
+    numCorrette = 0
+    for i in range(0,len(yTest[1])):
+        yTemp = fromOutputToLabel(yTest[:,i])
+        labelCheck = fromOutputToLabel(testT[:,i])
+        print("Coppia [",i,"]: y = ",yTemp," --- label = ",labelCheck)
+        if yTemp == labelCheck:
+            numCorrette = numCorrette + 1
+    
+    perc = (1 / numCorrette) * 100
+    print("Percentuale di risposte corrette della rete sul test set: ", perc)
+    
+
+    
     
 
 def fromOutputToLabel(y):

@@ -9,6 +9,7 @@ import numpy as np
 from keras.datasets import mnist
 from sklearn.utils import shuffle
 from sklearn.model_selection import KFold
+import matplotlib.pyplot as plt
 
 import rete as r
 import utility as u
@@ -22,7 +23,7 @@ print("Fatto!\n")
 def main():
 
     #Iper-parametri fissati del modello
-    M = 50
+    M = 25
     k = 10
     plot = 0
     test = 0
@@ -56,8 +57,20 @@ def main():
     X , labels = shuffle(X, labels)
     testX, testT = shuffle(testX,testT)
 
+
     #Ottengo le classi dalle etichette
     T = fm.getTargetsFromLabels(labels)
+
+    xx = X[5,:]
+    xx = xx * 255
+    xx = xx.reshape(28,28)
+    xl = labels[5]
+    xt = T[:,5]
+    plt.imshow(xx)
+    plt.show()
+    print("xx: ",xx,"\n")
+    print("xl: ",xl)
+    print("xt: ",xt)
 
 
     #Divisione del dataset. QUI È DA METTERE SOLO IL DATASET X E DA QUESTO TIRARE FUORI TRAIN E TEST PER IL KFOLD   
@@ -75,39 +88,44 @@ def main():
     u.infoShapes(X, labels, T, trainX, trainT, valX, valT)
 
     print("Caricamento completo!\n")
-
-    #creazione rete e avvio learning
-    rete = r.nuovaRete(len(trainX),M,len(trainT),f.sigmoide,f.sigmoide) 
-    r.infoRete(rete)
-    #r.stampaIperParametri(rete)
-
-    #Fase di learning - DA IMPLEMENTARE TRAMITE TECNICA K-FOLD CROSS-VALIDATION
-    [rete,err,errVal] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.crossEntropySoftmax, ra.RPROP)
-
-    u.plotErrori(err,errVal)
-
     return 0
+    print(">Algoritmo calcolo derivate:\t\tBackpropagation")
+    print(">Algoritmo aggiornamento pesi e bias:\tRPROP\n")
+    u.stampaInfoModelloRete("Shallow Network", M, len(trainT), "Sigmoide", "Sigmoide", "Cross Entropy")
+
     #Fase di scelta del modello della rete
-    print("Fase di valutazione del modello:")
+    print("\nFase di valutazione del modello:",flush=True)
     kf = KFold(n_splits=k)
-    print("Numero di fold: ",kf.get_n_splits(trainX))
-
-    valutazioni = np.zeros((10,1))
+    print(">Numero di fold:\t\t\t",kf.get_n_splits(trainX),flush=True)
+    
+    valutazioneErrore = np.zeros((10,1))
+    k = 0
     for train_index, test_index in kf.split(trainX):
-        #Creare la rete e gettarla via dopo la valutazione su questo fold
+        print("Fold: ",k)
+        sommaErrore = 0
+        #Creazione rete per i k fold
+        rete = r.nuovaRete(len(trainX),M,len(trainT),f.sigmoide,f.sigmoide) 
 
+        #Recupero dei k-fold
         train_x, test_x = trainX[train_index] , trainX[test_index]
         train_t , test_t = trainT[:,train_index] , trainT[:,test_index]
 
         train_x , test_x = np.transpose(train_x) , np.transpose(test_x)
 
+        #Prova di learning del modello di rete
+        [rete,err,errTest] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.derivCrossEntropy, ra.RPROP)
 
+        #Calcolo media errore sul test-set
+        sommaErrore = errTest.sum()
+        valutazioneErrore[k][0] = sommaErrore / len(valutazioneErrore)
+        k = k + 1
 
+        #Calcolo precisione sul test-set
 
-    
-
-
-
-    
+    media = valutazioneErrore.sum() / len(valutazioneErrore)
+    print("Valutazione terminata!\n\nRisultati del modello valutato:")
+    print("Media delle valutazioni errore: ",media)
+    #u.plotErrore(valutazioneErrore)
+            
 
 main()

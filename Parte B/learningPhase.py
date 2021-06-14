@@ -25,7 +25,6 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
         #Learning Batch
         [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
 
-        
         if epoca == 0:
             #Alla prima epoca, non avendo le derivate precedenti, faccio la discesa del gradiente
             rete = r.discesaDelGradiente(rete,eta,derivW1,derivW2,derivBiasHidden,derivBiasOutput)
@@ -34,8 +33,6 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
             #Dalla seconda epoca in poi posso effettuare la RPROP
             [rete, derivW1Pre,derivW2Pre,derivBiasHiddenPre,derivBiasOutputPre] = regolaAggiornamento(rete, etaPos, etaNeg, derivW1,derivW2,derivBiasHidden, derivBiasOutput, derivW1Pre, derivW2Pre, derivBiasHiddenPre, derivBiasOutputPre)
 
-        
-    
         #Vado a verificare l'errore sia sul train-set sia sul validation-set. (con k-fold è il test-set)
         y = b.simulaRete(rete,x)
         yVal = b.simulaRete(rete,valX)

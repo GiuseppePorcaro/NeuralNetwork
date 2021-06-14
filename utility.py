@@ -7,6 +7,19 @@ def plotErrori(errore, erroreVal):
     plt.plot(np.transpose(erroreVal), label = 'errore Valutazione')
     plt.show()
 
+def plotErrore(errore):
+    plt.plot(np.transpose(errore), label = 'errore')
+    plt.show()
+
+def stampaInfoModelloRete(tipoRete, m, c, funAttHidden, funAttOutput,funErrore):
+    print("Modello di rete: ")
+    print(">Tipo di modello:\t\t\t",tipoRete)
+    print(">Numero nodi hidden:\t\t\t",m)
+    print(">Numero nodi output:\t\t\t",c)
+    print(">Funzione attivazione layer hidden:\t",funAttHidden)
+    print(">Funzione attivazione layer output:\t",funAttOutput)
+    print(">Funzione errore:\t\t\t",funErrore)
+
 def plotImmagini(trainX, trainT):
     num = 10
     images = trainX[:num]

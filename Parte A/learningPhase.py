@@ -13,7 +13,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     reteScelta = rete
 
     if batch == 1:
-        eta = 0.000005
+        eta = 0.00000005
     
     print("-Eta:\t\t",eta)
 
@@ -41,7 +41,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
         yVal = b.simulaRete(rete,xVal)
         err[0][epoca] = f.crossEntropy(y,t)
         errVal[0][epoca] = f.crossEntropy(yVal,tVal)
-
+        
         print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 
         #Verifico se l'errore di valutazione è minore dell'errore minimo
