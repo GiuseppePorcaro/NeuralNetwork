@@ -67,10 +67,14 @@ def main():
     trainT = T[:,0:5000] #(10, 599)
     trainT = np.array(trainT)
 
-    valX = X[601:2001] #(199,784)
+    valX = X[5001:5600] #(199,784)
     valX = np.transpose(valX) #(784,199)
-    valT = T[:,601:2001] #(10,199)
+    valT = T[:,5001:5600] #(10,199)
     valT = np.array(valT)
+
+
+    #Controllo che almeno le prime 20 immagini del train set siano corrette con le rispettive label 
+    #utility.checkImmaginiTrain(trainX, trainT,len(trainX[1]))
     #-------------------------------------------------------------------------------------------
 
     utility.infoShapes(X, labels, T, trainX, trainT, valX, valT)
@@ -79,7 +83,7 @@ def main():
 
     #creazione rete e avvio learning------------------------------------------------------------
     arrayFa = [f.sigmoide] #Array di funzioni attivazione
-    arrayNumNeuroni = [50,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
+    arrayNumNeuroni = [70,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
 
     #Controllo di poter creare la rete
     if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
@@ -87,21 +91,23 @@ def main():
         print(">La dimensione di uno degli array (Funzione attivazioni o numNeuroni) non è corretta!")
         return 0
 
-    rete = r.nuovaRete(len(trainX),numLayers,arrayNumNeuroni,arrayFa,f.sigmoide) 
+    rete = r.nuovaRete(len(trainX),numLayers,arrayNumNeuroni,arrayFa,f.softmax) 
     r.infoRete(rete)
 
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.derivCrossEntropy,ra.discesaDelGradiente)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.crossEntropySoftmax,ra.discesaDelGradiente,1)
 
     #Fare plot degli errori
     utility.plotErrori(err,errVal)
 
-    #Validazione modello
-    print("\n\nValidazione del modello su test di 100 coppie:")
-    testX = np.transpose(testX[0:100])
-    testT = testT[:,0:100]
+    
+    #Validazione modello-----------------------------------------------------------------------------
+    #Valutazione errore su test-set
+    testX = np.transpose(testX[0:1000])
+    testT = testT[:,0:1000]
+    print("\n\nValidazione del modello su test-set di ",len(testX)," coppie, eseguito 10 volte:")
     sommaErroreTest = 0
     for k in range(1,11):
         yTest = bck.simulaRete(rete,testX)
@@ -110,51 +116,19 @@ def main():
     erroreTest = sommaErroreTest / k
     print(">Errore test: ",erroreTest)
 
-    ##########A QUANTO PARE I VALORI OUTPUT NON SONO QUELLI CORRETTI
-    ######CONTROLLARE ANCHE DAL CODICE MATLAB DEL PROFESSORE SE LE Y CORRISPONDONO ALLE ETICHETTE
+    #Valutazione precisione del test-set. Molto alta con uso di softmax
     yTest = bck.simulaRete(rete,testX)
-    '''
-    for i in range(0,10):
-        yCheck = yTest[:,i]
-        print("yCheck: ",yCheck)
-        yCheck = fromOutputToLabel(yCheck)
-        xCheck = testX[:,i]
-        tCheck = testT[:,i]
-        print("tCheck: ",tCheck)
-        tCheck = fromOutputToLabel(tCheck)
-    
-        print("yCheck: ",yCheck)
-        print("tCheck: ",tCheck)
-
-        xCheck = xCheck * 255
-        xCheck = xCheck.reshape(28,28)
-        plt.imshow(xCheck)
-        plt.show()
-    '''
-
-    
     numCorrette = 0
     for i in range(0,len(yTest[1])):
-        yTemp = fromOutputToLabel(yTest[:,i])
-        labelCheck = fromOutputToLabel(testT[:,i])
+        yTemp = utility.fromOutputToLabel(yTest[:,i])
+        labelCheck = utility.fromOutputToLabel(testT[:,i])
         print("Coppia [",i,"]: y = ",yTemp," --- label = ",labelCheck)
         if yTemp == labelCheck:
             numCorrette = numCorrette + 1
     
-    perc = (1 / numCorrette) * 100
-    print("Percentuale di risposte corrette della rete sul test set: ", perc)
-    
+    perc = (numCorrette/len(yTest[1])) * 100
+    print("Percentuale di risposte corrette(",numCorrette,") della rete sul test set: ", perc,"%")
+    #------------------------------------------------------------------------------------------------
 
-    
-    
-
-def fromOutputToLabel(y):
-    i = 0
-    max = -1
-    for k in range(0,10):
-        if y[k] > max:
-            max = y[k]
-            i = k
-    return i
 
 main()

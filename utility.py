@@ -52,4 +52,24 @@ def checkCreazioneRete(numLayersHidden, arr):
         return True
     return False
 
+def checkImmaginiTrain(trainX,trainT,size):
+    ckX = trainX * 255
+    ckX = ckX.reshape(28,28,size)
+    fig, axes = plt.subplots(4, 8, figsize=(1.5*8,2*4))
+    for i in range(0,32):
+        ax = axes[i//8, i%8]
+        ax.imshow(ckX[:,:,i], cmap='gray')
+        ax.set_title('Label: {}'.format(fromOutputToLabel(trainT[:,i])))
+    plt.tight_layout()
+    plt.show()
+
+def fromOutputToLabel(y):
+    i = 0
+    max = -1
+    for k in range(0,10):
+        if y[k] > max:
+            max = y[k]
+            i = k
+    return i
+
 

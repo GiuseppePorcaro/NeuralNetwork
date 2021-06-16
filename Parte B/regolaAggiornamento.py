@@ -33,9 +33,7 @@ def aggiornaDELTA(DELTA, deriv, derivPre,etaPos, etaNeg):
     
     return DELTA
 
-
-
-def aggiornaDELTAPESI(DELTA, pesi, deriv, derivPre,etaPos, etaNeg):
+def aggiornaDELTAV2(DELTA, pesi, deriv, derivPre,etaPos, etaNeg):
     deltaMax = 5
     deltaMin = 0.005
     for i in range(0,len(DELTA)):

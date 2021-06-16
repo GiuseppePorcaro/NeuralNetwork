@@ -23,12 +23,23 @@ def crossEntropy(Y,T): #OK
     return e
 
 def softmax(x):
-    return np.exp(x)/np.exp(x).sum()
+    e = np.exp(x)
+    return e/np.sum(e,axis=0,keepdims=True)
 
+def stableSoftmax(x):
+    #Questo softmax corregge i problemi legati ai floating point
+    s = np.exp(x-np.max(x))/np.sum(np.exp(x),axis=0,keepdims=True)
+    return s
+
+def derivSoftmax(x,t):
+    return x - t
 
 def crossEntropySoftmax(y,t):
-    z = np.exp(y)/np.exp(y).sum() #softmax
-    e = z - t
+    #Se si usa softmax come funzione di attivazione per il layer output, è possibile
+    #rendere il calcolo dei gradiendi in modo efficiente, unendo il calcolo della 
+    #derivata della cross entropy con quello del softmax, il quale diventa y-t
+    #dove y è l'output al quale è stato applicato il softmax
+    e = y - t
     return e
 
 def derivCrossEntropy(Y,T): #OK

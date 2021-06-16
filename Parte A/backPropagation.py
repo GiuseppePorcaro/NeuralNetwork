@@ -1,6 +1,6 @@
 import numpy as np
 
-def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
+def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr,softmax):
 
     if rete.nStrati == 1:
         dhInput = 0 #Siccome non è usato quando la rete ha un singolo layer, lo si inizializza per evitare che sia undefined
@@ -9,7 +9,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
         [y,a1,z1,a2] = forwardStep(rete,x)
 
         #Passo di calcolo derivate
-        [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut, dh] = calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete)
+        [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut, dh] = calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete,softmax)
     else:
 
         derivWhidden = np.empty((1,rete.nStrati-1), dtype = object)
@@ -33,7 +33,6 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
             derivBiasHidden[0][i] = dh.sum(axis=1)
             derivBiasHidden[0][i] = derivBiasHidden[0][i].reshape(len(derivBiasHidden[0][i]),1)
 
-
         #Calcolo derivata primo layer hidden
         dh = np.dot(np.transpose(rete.W[0][0]),dh)
         dh = dh * derivFunHidden(a1[0][0])
@@ -44,12 +43,15 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
 
     return [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut,dhInput,dbhInput]
 
-def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete):
+def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete,softmax):
 
-    derivErr = derivFunErr(y,t)
-
-    deltaOut = derivFunOutupt(a2)
-    deltaOut = deltaOut * derivFunErr(y,t)
+    if softmax == 0:
+        deltaOut = derivFunOutupt(a2)
+        deltaOut = deltaOut * derivFunErr(y,t)
+    else:
+        #Se si usa il softmax si può rendere il calcolo più efficiente: per i dettagli guardare la funzione
+        #crossEntropySoftmax
+        deltaOut = derivFunErr(y,t)
 
     deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut) 
     deltaHidden = deltaHidden * derivFunHidden(a1)

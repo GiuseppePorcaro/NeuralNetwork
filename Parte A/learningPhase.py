@@ -2,7 +2,7 @@ import numpy as np
 import backPropagation as b
 import funzioniAttivazioneErrore as f
 
-def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento):
+def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax):
     [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
     #Learning phase
 
@@ -13,7 +13,9 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     reteScelta = rete
 
     if batch == 1:
-        eta = 0.00000005
+        eta = 0.0000005
+        if softmax == 1:
+            eta = 0.0005
     
     print("-Eta:\t\t",eta)
 
@@ -27,12 +29,12 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
                 xb = x[:,n].reshape((x.shape[0],1))
                 tb = t[:,n].reshape((t.shape[0],1))
 
-                [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, xb, tb, derivFunActHidden, derivFunActOutput, derivFunErr)
+                [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, xb, tb, derivFunActHidden, derivFunActOutput, derivFunErr,softmax)
 
                 rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput, dhInput,dbhInput)
         else:
             #Learning di tipo batch
-            [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
+            [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr,softmax)
 
             rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput,dhInput, dbhInput)    
         
@@ -41,7 +43,7 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
         yVal = b.simulaRete(rete,xVal)
         err[0][epoca] = f.crossEntropy(y,t)
         errVal[0][epoca] = f.crossEntropy(yVal,tVal)
-        
+
         print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 
         #Verifico se l'errore di valutazione è minore dell'errore minimo

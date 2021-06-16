@@ -104,7 +104,7 @@ def main():
         print("Fold: ",k)
         sommaErrore = 0
         #Creazione rete per i k fold
-        rete = r.nuovaRete(len(trainX),M,len(trainT),f.sigmoide,f.sigmoide) 
+        rete = r.nuovaRete(len(trainX),M,len(trainT),f.sigmoide,f.softmax) 
 
         #Recupero dei k-fold
         train_x, test_x = trainX[train_index] , trainX[test_index]
@@ -113,7 +113,7 @@ def main():
         train_x , test_x = np.transpose(train_x) , np.transpose(test_x)
 
         #Prova di learning del modello di rete
-        [rete,err,errTest] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.derivCrossEntropy, ra.RPROP)
+        [rete,err,errTest] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, trainX, trainT, valX, valT, f.derivSigmoide, f.derivSigmoide, f.crossEntropySoftmax, ra.RPROP)
 
         #Calcolo media errore sul test-set
         sommaErrore = errTest.sum()
