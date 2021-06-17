@@ -20,7 +20,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr,softmax
         k = rete.nStrati-2
 
         #Calcolo derivate tra layer output e ultimo layer hidden
-        [derivWhidden[0][k], derivWOut, derivBiasHidden[0][k], derivBiasOut,dh] = calcoloDerivate(y,a1[0][k+1],z1[0][k+1],a2,derivFunHidden, derivFunOutupt, derivFunErr,z1[0][k],t,rete)
+        [derivWhidden[0][k], derivWOut, derivBiasHidden[0][k], derivBiasOut,dh] = calcoloDerivate(y,a1[0][k+1],z1[0][k+1],a2,derivFunHidden, derivFunOutupt, derivFunErr,z1[0][k],t,rete,softmax)
 
         #Calcolo derivate tra pen-ultimo layer hidden e secondo layer hidden
         k = k-1

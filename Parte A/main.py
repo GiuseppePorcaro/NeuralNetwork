@@ -22,14 +22,19 @@ print("Fatto!\n")
 
 def main():
 
-    eta = 0.1
+    eta = 0.001
     plot = 0
     test = 0
-    batch = 1
-    numLayers = 1
-    epocheMax = 500
+    batch = 0
+    numLayers = 4
+    epocheMax = 100
     numClasses = 10
     numFeatures = 28*28
+
+    numCoppieVal = 200
+    numCoppieTest = 150
+    numCoppieTrain = 500
+
 
     #Recupero e stampa dimensioni del dataset mnist
     print(">Caricamento dataset...\n",end='',flush=True)
@@ -60,16 +65,15 @@ def main():
     T = fm.getTargetsFromLabels(labels)
     testT = fm.getTargetsFromLabels(testT)
 
-
     #Divisione del dataset in train-val-test (manca il test)    
-    trainX = X[0:5000] #(599,784)
-    trainX = np.transpose(trainX) #(784,599)
-    trainT = T[:,0:5000] #(10, 599)
+    trainX = X[0:numCoppieTrain] #(N,d)
+    trainX = np.transpose(trainX) #(d,N)
+    trainT = T[:,0:numCoppieTrain] #(c, N)
     trainT = np.array(trainT)
 
-    valX = X[5001:5600] #(199,784)
-    valX = np.transpose(valX) #(784,199)
-    valT = T[:,5001:5600] #(10,199)
+    valX = X[numCoppieTrain+1:numCoppieTrain+numCoppieVal+1] #(N,d)
+    valX = np.transpose(valX) #(d,N)
+    valT = T[:,numCoppieTrain+1:numCoppieTrain+numCoppieVal+1] #(c,N)
     valT = np.array(valT)
 
 
@@ -82,8 +86,8 @@ def main():
     print("Caricamento completo!\n")
 
     #creazione rete e avvio learning------------------------------------------------------------
-    arrayFa = [f.sigmoide] #Array di funzioni attivazione
-    arrayNumNeuroni = [70,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
+    arrayFa = [f.RELU,f.RELU,f.RELU,f.RELU] #Array di funzioni attivazione
+    arrayNumNeuroni = [80,50,40,20,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
 
     #Controllo di poter creare la rete
     if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
@@ -97,24 +101,23 @@ def main():
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.crossEntropySoftmax,ra.discesaDelGradiente,1)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivRELU,f.derivRELU,f.crossEntropySoftmax,ra.discesaDelGradiente,1)
 
     #Fare plot degli errori
     utility.plotErrori(err,errVal)
 
-    
     #Validazione modello-----------------------------------------------------------------------------
     #Valutazione errore su test-set
-    testX = np.transpose(testX[0:1000])
-    testT = testT[:,0:1000]
-    print("\n\nValidazione del modello su test-set di ",len(testX)," coppie, eseguito 10 volte:")
+    testX = np.transpose(testX[0:numCoppieTest])
+    testT = testT[:,0:numCoppieTest]
+    print("\n\nValidazione del modello su test-set di ",len(testX[1])," coppie, eseguito 10 volte:")
     sommaErroreTest = 0
     for k in range(1,11):
         yTest = bck.simulaRete(rete,testX)
         erroreTest = f.crossEntropy(yTest,testT)
         sommaErroreTest = sommaErroreTest + erroreTest
     erroreTest = sommaErroreTest / k
-    print(">Errore test: ",erroreTest)
+    print(">Errore test:\t\t",erroreTest)
 
     #Valutazione precisione del test-set. Molto alta con uso di softmax
     yTest = bck.simulaRete(rete,testX)
@@ -127,8 +130,8 @@ def main():
             numCorrette = numCorrette + 1
     
     perc = (numCorrette/len(yTest[1])) * 100
-    print("Percentuale di risposte corrette(",numCorrette,") della rete sul test set: ", perc,"%")
+    print(">Precisione test:\t", perc,"%")
     #------------------------------------------------------------------------------------------------
-
+    print("\n")
 
 main()

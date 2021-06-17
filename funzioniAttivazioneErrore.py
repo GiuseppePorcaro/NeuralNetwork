@@ -8,8 +8,17 @@ def identity(x): #ok
     y = x
     return y
 
+def tanh(x):
+    return np.tanh(x)
+
+def derivTanh(x):
+    return 1-np.power(tanh(x),2)
+
 def RELU(x):
     return x * (x > 0)
+
+def derivRELU(x):
+    return np.greater(x,0).astype(int)
 
 def LRELU(x,beta):
     return beta * x * (x > 0)
