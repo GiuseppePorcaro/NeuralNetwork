@@ -22,18 +22,18 @@ print("Fatto!\n")
 
 def main():
 
-    eta = 0.001
+    eta = 0.1
     plot = 0
     test = 0
-    batch = 0
+    batch = 1
     numLayers = 4
-    epocheMax = 100
+    epocheMax = 200
     numClasses = 10
     numFeatures = 28*28
 
-    numCoppieVal = 200
-    numCoppieTest = 150
-    numCoppieTrain = 500
+    numCoppieVal = 5000
+    numCoppieTest = 1500
+    numCoppieTrain = 1500
 
 
     #Recupero e stampa dimensioni del dataset mnist
@@ -87,7 +87,7 @@ def main():
 
     #creazione rete e avvio learning------------------------------------------------------------
     arrayFa = [f.RELU,f.RELU,f.RELU,f.RELU] #Array di funzioni attivazione
-    arrayNumNeuroni = [80,50,40,20,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
+    arrayNumNeuroni = [100,70,50,50,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
 
     #Controllo di poter creare la rete
     if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):

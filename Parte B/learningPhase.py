@@ -16,7 +16,7 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
     minErr = f.sumOfSquares(yVal,valT)
     reteScelta = rete
 
-    eta = 0.00005
+    eta = 0.005
     print("-Eta:\t\t",eta)
 
     print("\nEpoca\t\t Errore\t\t\t\t Errore Valutazione")
