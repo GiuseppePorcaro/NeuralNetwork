@@ -74,7 +74,7 @@ def forwardStep(rete,x):
         a2 = np.dot(rete.WOutput,z1) + rete.bOutput 
         y = rete.g(a2)
     else:
-
+        #Inizializzazione array per memorizzare output e somme pesate da usare nella backpropagation
         a1 = np.empty((1,rete.nStrati), dtype = object)
         z1 = np.empty((1,rete.nStrati), dtype = object)
 

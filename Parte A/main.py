@@ -91,6 +91,9 @@ def main():
 
     #Controllo di poter creare la rete
     if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
+        if numLayer < 1:
+            print("La rete deve avere almeno un layer hidden!")
+            return 0
         print("Non è possibile costruire tale modello di rete:")
         print(">La dimensione di uno degli array (Funzione attivazioni o numNeuroni) non è corretta!")
         return 0
