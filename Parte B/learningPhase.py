@@ -13,7 +13,7 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
     err = np.ones((1,N))
     errVal = np.ones((1,N))
     yVal = b.simulaRete(rete,valX)
-    minErr = f.sumOfSquares(yVal,valT)
+    minErr = f.crossEntropy(yVal,valT)
     reteScelta = rete
 
     eta = 0.005
@@ -36,8 +36,8 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
         #Vado a verificare l'errore sia sul train-set sia sul validation-set. (con k-fold è il test-set)
         y = b.simulaRete(rete,x)
         yVal = b.simulaRete(rete,valX)
-        err[0][epoca] = f.crossEntropy(y,t)
-        errVal[0][epoca] = f.crossEntropy(yVal,valT)
+        err[0][epoca] = f.crossEntropy(y,t) / len(x)
+        errVal[0][epoca] = f.crossEntropy(yVal,valT) / len(valX)
 
         print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 

@@ -2,7 +2,7 @@ import numpy as np
 import backPropagation as b
 import funzioniAttivazioneErrore as f
 
-def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax):
+def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax,funErr):
     [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
     #Learning phase
 
@@ -13,9 +13,9 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
     reteScelta = rete
 
     if batch == 1:
-        eta = 0.0000005
+        eta = 0.00005
         if softmax == 1:
-            eta = 0.0005
+            eta = 0.005
     
     print("-Eta:\t\t",eta)
 
@@ -41,8 +41,13 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
         #Vado a simulare gli output della rete dopo l'aggiormenento alla epochesima-epoca e calcolo l'errore
         y = b.simulaRete(rete,x)
         yVal = b.simulaRete(rete,xVal)
-        err[0][epoca] = f.crossEntropy(y,t)
-        errVal[0][epoca] = f.crossEntropy(yVal,tVal)
+        err[0][epoca] = funErr(y,t)
+        errVal[0][epoca] = funErr(yVal,tVal)
+
+        if batch == 1:
+            #Per vedere l'errore non su tutto il dataset, ma sulle singole coppie
+            err[0][epoca] = err[0][epoca] / len(x)
+            errVal[0][epoca] = errVal[0][epoca] / len(xVal)
 
         print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 

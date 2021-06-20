@@ -22,21 +22,21 @@ print("Fatto!\n")
 
 #COSA DA RISOLVERE: HO INSERITO UN ARRAY PER SPECIFICARE UNA FUNZIONE DI ATTIVAZIONE PER OGNI LAYER HIDDEN, MA 
 #NON HO SPECIFICATO POI UN ARRAY CHE CONTIENE LE DERIVATE PER OGNI FUNZIONE DI ATTIVAZIONE PER OGNI LAYER HIDDEN.
-#PER ORA LA RETE USA LA STESSA DERIVATA ANCHE SE SPECIFICO DIVERSE FUNZIONI DI ATTIVAZIONE
+#PER ORA LA RETE USA LA STESSA DERIVATA ANCHE SE SPECIFICO DIVERSE FUNZIONI DI
 def main():
 
-    eta = 0.1
+    eta = 0.01
     plot = 0
     test = 0
     batch = 1
-    numLayers = 4
+    numLayers = 1
     epocheMax = 200
     numClasses = 10
     numFeatures = 28*28
 
     numCoppieVal = 5000
-    numCoppieTest = 1500
-    numCoppieTrain = 1500
+    numCoppieTest = 1000
+    numCoppieTrain = 1000
 
 
     #Recupero e stampa dimensioni del dataset mnist
@@ -89,12 +89,12 @@ def main():
     print("Caricamento completo!\n")
 
     #creazione rete e avvio learning------------------------------------------------------------
-    arrayFa = [f.RELU,f.RELU,f.RELU,f.RELU] #Array di funzioni attivazione
-    arrayNumNeuroni = [100,70,50,50,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
+    arrayFa = [f.sigmoide] #Array di funzioni attivazione
+    arrayNumNeuroni = [50,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
 
     #Controllo di poter creare la rete
     if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
-        if numLayer < 1:
+        if numLayers < 1:
             print("La rete deve avere almeno un layer hidden!")
             return 0
         print("Non è possibile costruire tale modello di rete:")
@@ -107,7 +107,7 @@ def main():
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivRELU,f.derivRELU,f.crossEntropySoftmax,ra.discesaDelGradiente,1)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.derivCrossEntropySoftmax,ra.discesaDelGradiente,1,f.crossEntropy)
 
     #Fare plot degli errori
     utility.plotErrori(err,errVal)
@@ -120,7 +120,7 @@ def main():
     sommaErroreTest = 0
     for k in range(1,11):
         yTest = bck.simulaRete(rete,testX)
-        erroreTest = f.crossEntropy(yTest,testT)
+        erroreTest = f.crossEntropy(yTest,testT) / len(testX[1])
         sommaErroreTest = sommaErroreTest + erroreTest
     erroreTest = sommaErroreTest / k
     print(">Errore test:\t\t",erroreTest)
@@ -131,12 +131,14 @@ def main():
     for i in range(0,len(yTest[1])):
         yTemp = utility.fromOutputToLabel(yTest[:,i])
         labelCheck = utility.fromOutputToLabel(testT[:,i])
-        print("Coppia [",i,"]: y = ",yTemp," --- label = ",labelCheck)
+        #print("Coppia [",i,"]: y = ",yTemp," --- label = ",labelCheck)
         if yTemp == labelCheck:
             numCorrette = numCorrette + 1
     
     perc = (numCorrette/len(yTest[1])) * 100
     print(">Precisione test:\t", perc,"%")
+    print(">Errore minimo sul train-set: ",np.min(err))
+    print(">Errore minimo sul validation-set: ",np.min(errVal))
     #------------------------------------------------------------------------------------------------
     print("\n")
 

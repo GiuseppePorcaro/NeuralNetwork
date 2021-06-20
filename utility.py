@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 def plotErrori(errore, erroreVal):
     plt.plot(np.transpose(errore), label = 'errore')
     plt.plot(np.transpose(erroreVal), label = 'errore Valutazione')
+    plt.xlabel("Epoche")
+    plt.ylabel("Errore")
+    plt.title("Grafico errori su train e validation set")
+    plt.legend()
     plt.show()
 
 def plotErrore(errore):
