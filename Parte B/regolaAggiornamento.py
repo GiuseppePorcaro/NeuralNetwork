@@ -2,19 +2,23 @@ import numpy as np
 
 def RPROP(rete, etaPos, etaNeg, derivHidden,derivOutput,derivBHidden, derivBOutput, derivHiddenPre, derivOutputPre, derivBHiddenPre, derivBOutputPre):
     
+    #Aggiornamento dei delta dei parametri della rete
     rete.DELTAW1 = aggiornaDELTA(rete.DELTAW1, derivHidden, derivHiddenPre, etaPos, etaNeg)
     rete.DELTAWOutput = aggiornaDELTA(rete.DELTAWOutput, derivOutput, derivOutputPre,etaPos,etaNeg)
     rete.DELTAB1 = aggiornaDELTA(rete.DELTAB1, derivBHidden, derivBHiddenPre,etaPos, etaNeg)
     rete.DELTABOutput = aggiornaDELTA(rete.DELTABOutput, derivBOutput, derivBOutputPre,etaPos,etaNeg)
 
+    #Aggiornamento dei parametri come stabilito dalla regola di aggiornamento RPROP
     rete.W1 = rete.W1 - np.sign(derivHidden)*rete.DELTAW1
     rete.b1 = rete.b1 - np.sign(derivBHidden)*rete.DELTAB1
     rete.WOutput = rete.WOutput - np.sign(derivOutput)*rete.DELTAWOutput
     rete.bOutput = rete.bOutput - np.sign(derivBOutput)*rete.DELTABOutput
     
+    #Restituisco le derivate correnti che diventeranno quelle precedenti nella prossima epoca
     return [rete, derivHidden,derivOutput,derivBHidden,derivBOutput]
 
 def aggiornaDELTA(DELTA, deriv, derivPre,etaPos, etaNeg):
+    #Vado a verificare il prodotto dei gradienti e aggiorno di conseguenza i DELTA dei parametri
     deltaMax = 5
     deltaMin = 0.005
     for i in range(0,len(DELTA)):
@@ -26,7 +30,7 @@ def aggiornaDELTA(DELTA, deriv, derivPre,etaPos, etaNeg):
     
     return DELTA
 
-def aggiornaDELTAV2(DELTA, pesi, deriv, derivPre,etaPos, etaNeg):
+def aggiornaDELTA_Paper(DELTA, pesi, deriv, derivPre,etaPos, etaNeg):
     deltaMax = 5
     deltaMin = 0.005
     for i in range(0,len(DELTA)):

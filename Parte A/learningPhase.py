@@ -3,13 +3,14 @@ import backPropagation as b
 import funzioniAttivazioneErrore as f
 
 def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax,funErr):
+    #Inizializzo le derivate altrimenti sono indefinite
     [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
-    #Learning phase
 
+    #Inizializzazione array degli errori ed errore minimo
     err = np.ones((1,N))
     errVal = np.ones((1,N))
     yVal = b.simulaRete(rete,xVal)
-    minErr = f.sumOfSquares(yVal,tVal)
+    minErr = funErr(yVal,tVal)
     reteScelta = rete
 
     if batch == 1:

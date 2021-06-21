@@ -11,7 +11,7 @@ def backPropagation(rete,x,t, derivFunOutupt, derivFunErr,softmax):
         #Passo di calcolo derivate
         [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut, dh] = calcoloDerivate(y,a1,z1,a2,rete.derivF[0], derivFunOutupt, derivFunErr,x,t,rete,softmax)
     else:
-
+        #Array che memorizzaranno tutte le derivate degli strati interni
         derivWhidden = np.empty((1,rete.nStrati-1), dtype = object)
         derivBiasHidden = np.empty((1,rete.nStrati-1), dtype = object)
 
@@ -45,12 +45,13 @@ def backPropagation(rete,x,t, derivFunOutupt, derivFunErr,softmax):
 
 def calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete,softmax):
 
+    #Se si usa il softmax come funzione attivazione output si può unire il calcolo della derivata
+    #alla derivata della funzione di errore crossEntropy. Se 1 si usa direttamente tale derivata
+    #Se 0 allora si effettua il calcolo della backprop normalmente
     if softmax == 0:
         deltaOut = derivFunOutupt(a2)
         deltaOut = deltaOut * derivFunErr(y,t)
     else:
-        #Se si usa il softmax si può rendere il calcolo più efficiente: per i dettagli guardare la funzione
-        #crossEntropySoftmax
         deltaOut = derivFunErr(y,t)
 
     deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut) 
@@ -78,6 +79,7 @@ def forwardStep(rete,x):
         a1 = np.empty((1,rete.nStrati), dtype = object)
         z1 = np.empty((1,rete.nStrati), dtype = object)
 
+        #Calcolo e memorizzazione di tutti gli output e 'a' degli strati hidden
         a1[0][0] = np.dot(rete.W1,x) + rete.b1
         z1[0][0] = rete.f[0](a1[0][0])
         k = 1

@@ -7,15 +7,18 @@ import funzioniAttivazioneErrore as f
 def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax,funErrore):
     #Per questa parte del progetto la learing phase implementerà solo la modalità batch
 
+    #Inizializzazione derivate altrimenti sono indefinite
     [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
     [derivW1Pre,derivW2Pre,derivBiasHiddenPre,derivBiasOutputPre] = [0,0,0,0]
     
+    #Inizializzazione array errore e errore minimo
     err = np.ones((1,N))
     errVal = np.ones((1,N))
     yVal = b.simulaRete(rete,valX)
     minErr = funErrore(yVal,valT)
     reteScelta = rete
 
+    #Eta per la singola discesa del gradiente al passo t = 1
     eta = 0.005
     print("-Eta:\t\t",eta)
 

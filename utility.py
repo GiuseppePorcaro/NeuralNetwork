@@ -31,7 +31,7 @@ def plotImmagini(trainX, trainT):
 
     num_row = 2
     num_col = 5
-    # plot images
+    #plot images
     fig, axes = plt.subplots(num_row, num_col, figsize=(1.5*num_col,2*num_row))
     for i in range(num):
         ax = axes[i//num_col, i%num_col]

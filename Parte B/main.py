@@ -136,6 +136,4 @@ def main():
     u.plotValutazioniK_fold(valutazioneErrore,valutazionePrecisione)
 
 
-            
-
 main()

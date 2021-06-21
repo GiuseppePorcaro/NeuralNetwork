@@ -47,9 +47,8 @@ def crossEntropySoftmax(y,t):
     return (np.log(np.exp(y).sum())) - ((t*y).sum())
 
 def derivCrossEntropySoftmax(y,t):
-    #Se si usa softmax come funzione di attivazione per il layer output, è possibile
-    #rendere il calcolo dei gradiendi in modo efficiente, unendo il calcolo della 
-    #derivata della cross entropy con quello del softmax, il quale diventa y-t
+    #Se si usa softmax come funzione di attivazione per il layer output, è possibile, 
+    #unire il calcolo della derivata della cross entropy con quello del softmax, il quale diventa y-t
     #dove y è l'output al quale è stato applicato il softmax
     e = y - t
     return e

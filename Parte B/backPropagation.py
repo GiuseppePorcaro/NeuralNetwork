@@ -5,6 +5,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr, softma
     #Passo di forwardStep
     [y,a1,z1,a2] = forwardStep(rete,x)
 
+    #Già spiegato nella parte A il motivo del flag softmax
     if softmax == 0:
         #Passo di calcolo derivate
         deltaOut = derivFunOutupt(a2) 
