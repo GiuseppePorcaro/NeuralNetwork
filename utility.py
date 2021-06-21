@@ -76,4 +76,19 @@ def fromOutputToLabel(y):
             i = k
     return i
 
+def plotValutazioniK_fold(valutazioneErrore, valutazionePrecisione):
+    valutazioneErrore = valutazioneErrore.flatten()
+    plt.bar(range(10),valutazioneErrore)
+    plt.title("Valutazione errore su test-set")
+    plt.xlabel("K-esimo fold")
+    plt.ylabel("Errore")
+    plt.show()
+
+    valutazionePrecisione = valutazionePrecisione.flatten()
+    plt.bar(range(10),valutazionePrecisione)
+    plt.title("Valutazione precisione sul test-set")
+    plt.xlabel("K-esimo fold")
+    plt.ylabel("Precisione in %")
+    plt.show()
+
 

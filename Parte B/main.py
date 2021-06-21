@@ -29,16 +29,17 @@ def main():
     test = 0
     etaPos = 1.002
     etaNeg = 0.005
-    epocheMax = 10
+    epocheMax = 130
     numClasses = 10
     numFeatures = 28*28
+    numeroCoppie = 5000
 
     #Recupero e stampa dimensioni del dataset mnist
     print(">Caricamento dataset...\n",end='',flush=True)
     time.sleep(0.2)
 
     (X, labels), (testX,testT) = mnist.load_data()
-    #Bisogna controllare che immagini ed etichette siano correttamente impostate
+
     #Plot delle immagini
     if plot == 1:
         u.plotImmagini(X, labels)
@@ -61,9 +62,9 @@ def main():
     T = fm.getTargetsFromLabels(labels)
 
     #Diminuzione del dataset X in un dataset di 5000 coppie 
-    datasetX = X[0:5000]
+    datasetX = X[0:numeroCoppie]
     datasetX = np.transpose(datasetX)
-    datasetT = T[:,0:5000]
+    datasetT = T[:,0:numeroCoppie]
     datasetT = np.array(datasetT)
 
     valX = np.zeros((1,1)) #Serve solo nella funzione infoShapes, ma per il problema qui definito non è necessario
@@ -96,8 +97,6 @@ def main():
         train_x, test_x = datasetX[:,train_index] , datasetX[:,test_index]
         train_t , test_t = datasetT[:,train_index] , datasetT[:,test_index]
 
-        #train_x , test_x = np.transpose(train_x) , np.transpose(test_x)
-
         #Prova di learning del modello di rete
         [rete,err,errTest] = l.learningPhase(rete, epocheMax, etaPos, etaNeg, train_x, train_t, test_x, test_t, f.derivSigmoide, f.derivSigmoide, f.derivCrossEntropySoftmax, ra.RPROP,1,f.crossEntropy)
 
@@ -129,10 +128,14 @@ def main():
     mediaPrecisione = valutazionePrecisione.sum() / len(valutazionePrecisione)
     print("Media della precisione:\t\t",mediaPrecisione)
 
-    print("Valutazione errore nei vari fold:\n",np.transpose(valutazioneErrore.reshape(-1,10)))
+    valutazioneErrore = np.transpose(valutazioneErrore)
+    valutazionePrecisione = np.transpose(valutazionePrecisione)
+    print("Valutazione errore nei vari fold:\n",valutazioneErrore)
     print("Valutazione precisione nei vari fold:\n",valutazionePrecisione)
-    plt.bar(range(1,10),valutazioneErrore)
-    plt.show()
+    
+    u.plotValutazioniK_fold(valutazioneErrore,valutazionePrecisione)
+
+
             
 
 main()

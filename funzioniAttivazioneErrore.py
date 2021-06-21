@@ -1,10 +1,10 @@
 import numpy as np
 
-def sigmoide(x): #ok
+def sigmoide(x): 
     y = (1/(1 + np.exp(-x)))
     return y
 
-def identity(x): #ok
+def identity(x): 
     y = x
     return y
 
@@ -23,11 +23,11 @@ def derivRELU(x):
 def LRELU(x,beta):
     return beta * x * (x > 0)
 
-def sumOfSquares(y,t): #OK
+def sumOfSquares(y,t): 
     e = (1/2) * (np.power(y-t,2).sum())
     return e
 
-def crossEntropy(Y,T): #OK
+def crossEntropy(Y,T): 
     e=-(T * np.log(Y)).sum()
     return e
 
@@ -54,16 +54,16 @@ def derivCrossEntropySoftmax(y,t):
     e = y - t
     return e
 
-def derivCrossEntropy(Y,T): #OK
+def derivCrossEntropy(Y,T): 
     e = -(T / Y).sum(axis=1)
     e = e.reshape(len(e),1)
     return e
 
-def derivSumOfSquares(y,t): #OK
+def derivSumOfSquares(y,t): 
     e = y-t
     return e
 
-def derivSigmoide(x): #OK
+def derivSigmoide(x): 
     z = sigmoide(x)
     y = z * (1-z)
     return y
