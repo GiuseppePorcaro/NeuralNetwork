@@ -1,14 +1,7 @@
 import numpy as np
 
 def RPROP(rete, etaPos, etaNeg, derivHidden,derivOutput,derivBHidden, derivBOutput, derivHiddenPre, derivOutputPre, derivBHiddenPre, derivBOutputPre):
-
-    '''
-    [rete.DELTAW1, rete.W1, derivHidden] = aggiornaDELTAPESI(rete.DELTAW1, rete.W1, derivHidden, derivHiddenPre,etaPos,etaNeg)
-    [rete.DELTAWOutput, rete.WOutput, derivOutput] = aggiornaDELTAPESI(rete.DELTAWOutput, rete.WOutput, derivOutput, derivOutputPre,etaPos,etaNeg)
-    [rete.DELTAB1, rete.b1, derivBHidden] = aggiornaDELTAPESI(rete.DELTAB1, rete.b1, derivBHidden, derivBHiddenPre,etaPos,etaNeg)
-    [rete.DELTABOutput, rete.bOutput, derivBOutput] = aggiornaDELTAPESI(rete.DELTABOutput, rete.bOutput, derivBOutput, derivBOutputPre,etaPos,etaNeg)
-    '''
-
+    
     rete.DELTAW1 = aggiornaDELTA(rete.DELTAW1, derivHidden, derivHiddenPre, etaPos, etaNeg)
     rete.DELTAWOutput = aggiornaDELTA(rete.DELTAWOutput, derivOutput, derivOutputPre,etaPos,etaNeg)
     rete.DELTAB1 = aggiornaDELTA(rete.DELTAB1, derivBHidden, derivBHiddenPre,etaPos, etaNeg)

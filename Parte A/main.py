@@ -38,7 +38,6 @@ def main():
     numCoppieTest = 1000
     numCoppieTrain = 1000
 
-
     #Recupero e stampa dimensioni del dataset mnist
     print(">Caricamento dataset...\n",end='',flush=True)
     time.sleep(0.2)
@@ -79,7 +78,6 @@ def main():
     valT = T[:,numCoppieTrain+1:numCoppieTrain+numCoppieVal+1] #(c,N)
     valT = np.array(valT)
 
-
     #Controllo che almeno le prime 20 immagini del train set siano corrette con le rispettive label 
     #utility.checkImmaginiTrain(trainX, trainT,len(trainX[1]))
     #-------------------------------------------------------------------------------------------
@@ -89,11 +87,14 @@ def main():
     print("Caricamento completo!\n")
 
     #creazione rete e avvio learning------------------------------------------------------------
-    arrayFa = [f.sigmoide] #Array di funzioni attivazione
+    #Array di funzioni attivazione e array derivate funzioni attivazione
+    arrayFa = [f.sigmoide] 
+    arrayDerivFa = [f.derivSigmoide]
     arrayNumNeuroni = [50,len(trainT)] #Array contenente per ciascun layer il proprio numero di neuroni
 
+
     #Controllo di poter creare la rete
-    if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1])):
+    if not(utility.checkCreazioneRete(numLayers, arrayFa)) or not(utility.checkCreazioneRete(numLayers, arrayNumNeuroni[0:len(arrayNumNeuroni)-1]) or not utility.checkCreazioneRete(numLayers,arrayDerivFa)):
         if numLayers < 1:
             print("La rete deve avere almeno un layer hidden!")
             return 0
@@ -101,13 +102,13 @@ def main():
         print(">La dimensione di uno degli array (Funzione attivazioni o numNeuroni) non è corretta!")
         return 0
 
-    rete = r.nuovaRete(len(trainX),numLayers,arrayNumNeuroni,arrayFa,f.softmax) 
+    rete = r.nuovaRete(len(trainX),numLayers,arrayNumNeuroni,arrayFa,arrayDerivFa,f.softmax) 
     r.infoRete(rete)
 
     #Fase di learning
     print("\n\n>Inizio fase di learning:\n-Numero epoche:\t",epocheMax,flush=True)
     time.sleep(0.1)
-    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivSigmoide,f.derivCrossEntropySoftmax,ra.discesaDelGradiente,1,f.crossEntropy)
+    [rete,err,errVal] = l.learningPhase(rete,epocheMax,trainX,trainT,valX,valT,batch,eta,f.derivSigmoide,f.derivCrossEntropySoftmax,ra.discesaDelGradiente,1,f.crossEntropy)
 
     #Fare plot degli errori
     utility.plotErrori(err,errVal)

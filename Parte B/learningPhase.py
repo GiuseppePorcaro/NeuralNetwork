@@ -4,7 +4,7 @@ import backPropagation as b
 import regolaAggiornamento as r
 import funzioniAttivazioneErrore as f
 
-def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento):
+def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax,funErrore):
     #Per questa parte del progetto la learing phase implementerà solo la modalità batch
 
     [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
@@ -13,7 +13,7 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
     err = np.ones((1,N))
     errVal = np.ones((1,N))
     yVal = b.simulaRete(rete,valX)
-    minErr = f.crossEntropy(yVal,valT)
+    minErr = funErrore(yVal,valT)
     reteScelta = rete
 
     eta = 0.005
@@ -23,7 +23,7 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
     print("---------------------------------------------------------------------------")
     for epoca in range(0,N):
         #Learning Batch
-        [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr)
+        [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr,softmax)
 
         if epoca == 0:
             #Alla prima epoca, non avendo le derivate precedenti, faccio la discesa del gradiente
@@ -36,8 +36,8 @@ def learningPhase(rete, N, etaPos, etaNeg, x, t, valX, valT, derivFunActHidden, 
         #Vado a verificare l'errore sia sul train-set sia sul validation-set. (con k-fold è il test-set)
         y = b.simulaRete(rete,x)
         yVal = b.simulaRete(rete,valX)
-        err[0][epoca] = f.crossEntropy(y,t) / len(x)
-        errVal[0][epoca] = f.crossEntropy(yVal,valT) / len(valX)
+        err[0][epoca] = funErrore(y,t) / len(x)
+        errVal[0][epoca] = funErrore(yVal,valT) / len(valX)
 
         print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 

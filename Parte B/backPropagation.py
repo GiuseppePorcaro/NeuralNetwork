@@ -1,13 +1,16 @@
 import numpy as np
 
-def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr):
+def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr, softmax):
 
     #Passo di forwardStep
     [y,a1,z1,a2] = forwardStep(rete,x)
 
-    #Passo di calcolo derivate
-    deltaOut = derivFunOutupt(a2) 
-    deltaOut = deltaOut * derivFunErr(y,t)
+    if softmax == 0:
+        #Passo di calcolo derivate
+        deltaOut = derivFunOutupt(a2) 
+        deltaOut = deltaOut * derivFunErr(y,t)
+    else:
+        deltaOut = derivFunErr(y,t)
 
     deltaHidden = np.dot(np.transpose(rete.WOutput),deltaOut)
     deltaHidden = deltaHidden * derivFunHidden(a1) 

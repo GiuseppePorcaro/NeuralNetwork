@@ -2,7 +2,7 @@ import numpy as np
 class Rete:
     pass
 
-def nuovaRete(numeroInput, numeroStratiHidden, arrNumNeuroni, arrFunAttivazioneHidden, funAttivazioneOutput):
+def nuovaRete(numeroInput, numeroStratiHidden, arrNumNeuroni, arrFunAttivazioneHidden, arrayDerivFunAttivazioneHidden,funAttivazioneOutput):
     rete = Rete()
     rete.nome = "Rete Neurale MultiStrato"
 
@@ -33,6 +33,7 @@ def nuovaRete(numeroInput, numeroStratiHidden, arrNumNeuroni, arrFunAttivazioneH
     
     #Funzioni di attivazione
     rete.f = arrFunAttivazioneHidden #array di funzioni di attivazione per i strati hidden
+    rete.derivF = arrayDerivFunAttivazioneHidden #array di derivate di funzioni di attivazione per i strati hidden
     rete.g = funAttivazioneOutput
     
     return rete

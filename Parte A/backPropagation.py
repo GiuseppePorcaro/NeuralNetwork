@@ -1,6 +1,6 @@
 import numpy as np
 
-def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr,softmax):
+def backPropagation(rete,x,t, derivFunOutupt, derivFunErr,softmax):
 
     if rete.nStrati == 1:
         dhInput = 0 #Siccome non è usato quando la rete ha un singolo layer, lo si inizializza per evitare che sia undefined
@@ -9,7 +9,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr,softmax
         [y,a1,z1,a2] = forwardStep(rete,x)
 
         #Passo di calcolo derivate
-        [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut, dh] = calcoloDerivate(y,a1,z1,a2,derivFunHidden, derivFunOutupt, derivFunErr,x,t,rete,softmax)
+        [derivWhidden,derivWOut,derivBiasHidden,derivBiasOut, dh] = calcoloDerivate(y,a1,z1,a2,rete.derivF[0], derivFunOutupt, derivFunErr,x,t,rete,softmax)
     else:
 
         derivWhidden = np.empty((1,rete.nStrati-1), dtype = object)
@@ -20,14 +20,14 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr,softmax
         k = rete.nStrati-2
 
         #Calcolo derivate tra layer output e ultimo layer hidden
-        [derivWhidden[0][k], derivWOut, derivBiasHidden[0][k], derivBiasOut,dh] = calcoloDerivate(y,a1[0][k+1],z1[0][k+1],a2,derivFunHidden, derivFunOutupt, derivFunErr,z1[0][k],t,rete,softmax)
+        [derivWhidden[0][k], derivWOut, derivBiasHidden[0][k], derivBiasOut,dh] = calcoloDerivate(y,a1[0][k+1],z1[0][k+1],a2,rete.derivF[k], derivFunOutupt, derivFunErr,z1[0][k],t,rete,softmax)
 
         #Calcolo derivate tra pen-ultimo layer hidden e secondo layer hidden
         k = k-1
         for i in range(k,-1,-1):
             
             dh = np.dot(np.transpose(rete.W[0][i+1]),dh)
-            dh = dh * derivFunHidden(a1[0][i+1])
+            dh = dh * rete.derivF[i](a1[0][i+1])
 
             derivWhidden[0][i] = np.dot(dh,np.transpose(z1[0][i]))
             derivBiasHidden[0][i] = dh.sum(axis=1)
@@ -35,7 +35,7 @@ def backPropagation(rete,x,t,derivFunHidden, derivFunOutupt, derivFunErr,softmax
 
         #Calcolo derivata primo layer hidden
         dh = np.dot(np.transpose(rete.W[0][0]),dh)
-        dh = dh * derivFunHidden(a1[0][0])
+        dh = dh * rete.derivF[0](a1[0][0])
 
         dhInput = np.dot(dh,np.transpose(x))
         dbhInput = dh.sum(axis=1)

@@ -2,7 +2,7 @@ import numpy as np
 import backPropagation as b
 import funzioniAttivazioneErrore as f
 
-def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax,funErr):
+def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActOutput, derivFunErr,regolaAggiornamento,softmax,funErr):
     [derivW1,derivW2,derivBiasHidden,derivBiasOutput] = [0,0,0,0]
     #Learning phase
 
@@ -29,25 +29,22 @@ def learningPhase(rete, N, x, t, xVal, tVal, batch, eta, derivFunActHidden, deri
                 xb = x[:,n].reshape((x.shape[0],1))
                 tb = t[:,n].reshape((t.shape[0],1))
 
-                [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, xb, tb, derivFunActHidden, derivFunActOutput, derivFunErr,softmax)
+                [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, xb, tb, derivFunActOutput, derivFunErr,softmax)
 
                 rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput, dhInput,dbhInput)
         else:
             #Learning di tipo batch
-            [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, x, t, derivFunActHidden, derivFunActOutput, derivFunErr,softmax)
+            [derivW1,derivW2,derivBiasHidden,derivBiasOutput,dhInput,dbhInput] = b.backPropagation(rete, x, t, derivFunActOutput, derivFunErr,softmax)
 
             rete = regolaAggiornamento(rete, eta, derivW1, derivW2, derivBiasHidden, derivBiasOutput,dhInput, dbhInput)    
         
         #Vado a simulare gli output della rete dopo l'aggiormenento alla epochesima-epoca e calcolo l'errore
         y = b.simulaRete(rete,x)
         yVal = b.simulaRete(rete,xVal)
-        err[0][epoca] = funErr(y,t)
-        errVal[0][epoca] = funErr(yVal,tVal)
 
-        if batch == 1:
-            #Per vedere l'errore non su tutto il dataset, ma sulle singole coppie
-            err[0][epoca] = err[0][epoca] / len(x)
-            errVal[0][epoca] = errVal[0][epoca] / len(xVal)
+        #Per ottenere l'errore medio su tutte le coppie del dataset vado a dividere per il numero di coppie N usate nella simulazione
+        err[0][epoca] = funErr(y,t) / len(x)
+        errVal[0][epoca] = funErr(yVal,tVal) / len(xVal)
 
         print(epoca,"\t\t",err[0][epoca],"\t\t",errVal[0][epoca])
 
